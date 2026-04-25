@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Review Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#f4f0ec;--bg2:#ece8e2;--card:#fdfaf7;--border:#ddd5ca;--shadow:rgba(150,130,110,.10);
+  --blue:#7ab3d4;--blue-lt:#c8dff0;--blue-bg:#eaf3fa;
+  --green:#7abe9b;--green-lt:#b8dfc9;--green-bg:#e8f5ee;
+  --red:#d98080;--red-lt:#f0c0c0;--red-bg:#faeaea;
+  --amber:#d4a86a;--amber-lt:#f0d4a8;--amber-bg:#fdf3e3;
+  --purple:#a08ab8;--purple-lt:#d4c8e8;--purple-bg:#f0eaf8;
+  --rose:#c8889a;--rose-lt:#eac8d0;--rose-bg:#faeef0;
+  --teal:#7ab8b8;--teal-lt:#b8dede;--teal-bg:#e8f4f4;
+  --sand:#c8b090;--sand-lt:#e8d8c0;--sand-bg:#f8f0e4;
+  --text:#3a2e24;--text2:#7a6858;--muted:#a09080;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Sarabun',sans-serif;font-size:13px;line-height:1.5;}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,#ede5da,#f5ede4,#e8ddd0);border-bottom:1px solid var(--border);padding:14px 28px 10px;position:sticky;top:0;z-index:130;box-shadow:0 2px 10px var(--shadow);}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.hdr-title{font-size:16px;font-weight:800;color:var(--text);}
+.hdr-sub{font-size:10px;color:var(--muted);}
+.badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;}
+.badge{padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;border:1px solid;}
+.b-g{background:var(--green-bg);border-color:var(--green-lt);color:#3a8a5a;}
+.b-b{background:var(--blue-bg);border-color:var(--blue-lt);color:#3a6a90;}
+.b-a{background:var(--amber-bg);border-color:var(--amber-lt);color:#8a6020;}
+.b-r{background:var(--red-bg);border-color:var(--red-lt);color:#a84848;}
+
+/* STICKY FINANCE BAR */
+.fin-bar{position:sticky;top:65px;z-index:120;background:linear-gradient(135deg,#f0e8e0,#f8f2ec);border-bottom:2px solid var(--border);box-shadow:0 3px 12px var(--shadow);padding:8px 28px;display:flex;gap:8px;flex-wrap:wrap;align-items:stretch;}
+.fin-item{flex:1;min-width:120px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:7px 11px;display:flex;flex-direction:column;gap:2px;box-shadow:0 1px 3px var(--shadow);}
+.fin-lbl{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;}
+.fin-val{font-size:14px;font-weight:800;font-family:'DM Mono',monospace;line-height:1.1;}
+.fin-sub{font-size:9px;color:var(--muted);}
+.fin-strip{height:2px;border-radius:2px;margin-top:5px;}
+.c-b{color:var(--blue);}.sb{background:var(--blue);}
+.c-g{color:var(--green);}.sg{background:var(--green);}
+.c-r{color:var(--red);}.sr{background:var(--red);}
+.c-a{color:var(--amber);}.sa{background:var(--amber);}
+.c-p{color:var(--purple);}.sp{background:var(--purple);}
+.c-t{color:var(--teal);}.st{background:var(--teal);}
+
+/* YEAR SELECTOR */
+.year-bar{position:sticky;top:177px;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);padding:8px 28px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.year-label{font-size:11px;font-weight:700;color:var(--muted);margin-right:4px;}
+.yr-btn{padding:5px 16px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);font-family:'Sarabun',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .18s;}
+.yr-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-bg);}
+.yr-btn.active{background:var(--blue);color:#fff;border-color:var(--blue);}
+.yr-note{font-size:10px;color:var(--muted);margin-left:auto;}
+
+/* TABS */
+.tab-nav{position:sticky;top:132px;z-index:110;background:var(--bg2);border-bottom:1px solid var(--border);padding:0 28px;display:flex;gap:0;}
+.tab-btn{padding:8px 20px;border:none;background:transparent;color:var(--muted);font-family:'Sarabun',sans-serif;font-size:12px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;margin-bottom:-1px;letter-spacing:.2px;}
+.tab-btn:hover{color:var(--text2);}
+.tab-btn.active{color:var(--text);border-bottom-color:var(--blue);}
+.tab-btn.p2.active{border-bottom-color:var(--purple);}
+.page{display:none;}
+.page.active{display:block;}
+
+/* SECTION BAR */
+.sbar{display:flex;align-items:center;justify-content:space-between;border-left:4px solid var(--blue);background:linear-gradient(90deg,var(--blue-bg),transparent);padding:6px 14px;border-radius:0 6px 6px 0;margin:20px 0 10px;}
+.sbar.g{border-color:var(--green);background:linear-gradient(90deg,var(--green-bg),transparent);}
+.sbar.a{border-color:var(--amber);background:linear-gradient(90deg,var(--amber-bg),transparent);}
+.sbar.p{border-color:var(--purple);background:linear-gradient(90deg,var(--purple-bg),transparent);}
+.sbar.t{border-color:var(--teal);background:linear-gradient(90deg,var(--teal-bg),transparent);}
+.sbar.r{border-color:var(--rose);background:linear-gradient(90deg,var(--rose-bg),transparent);}
+.sbar.s{border-color:var(--sand);background:linear-gradient(90deg,var(--sand-bg),transparent);}
+.stitle{font-size:12px;font-weight:800;color:var(--text);}
+.snote{font-size:10px;color:var(--muted);}
+
+/* ALERT */
+.alert{padding:8px 14px;border-radius:8px;font-size:11px;display:flex;align-items:flex-start;gap:7px;margin-bottom:12px;border:1px solid;}
+.alert.r{background:var(--red-bg);border-color:var(--red-lt);color:#a84848;}
+.alert.hidden{display:none;}
+
+/* MAIN */
+.main{padding:14px 28px 60px;max-width:1600px;margin:0 auto;}
+
+/* CHART GRID */
+.cg{display:grid;gap:11px;margin-bottom:4px;}
+.c1{grid-template-columns:1fr;}
+.c2{grid-template-columns:1fr 1fr;}
+.c3{grid-template-columns:1fr 1fr 1fr;}
+.cc{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px;box-shadow:0 1px 4px var(--shadow);}
+.ct{font-size:11px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.cs{font-size:10px;color:var(--muted);margin-bottom:9px;}
+.cw{position:relative;}
+.h160{height:160px;}.h180{height:180px;}.h200{height:200px;}.h220{height:220px;}.h240{height:240px;}.h260{height:260px;}.h280{height:280px;}
+
+/* NO DATA NOTE */
+.nodata{display:flex;align-items:center;justify-content:center;height:100%;font-size:20px;color:var(--muted);font-weight:700;letter-spacing:1px;}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto;}
+table.t{width:100%;border-collapse:collapse;font-size:11px;}
+table.t th{background:var(--bg2);padding:6px 8px;font-weight:700;color:var(--muted);text-align:right;border-bottom:1px solid var(--border);white-space:nowrap;font-size:10px;letter-spacing:.3px;}
+table.t th:first-child{text-align:left;}
+table.t td{padding:6px 8px;border-bottom:1px solid rgba(200,185,170,.2);text-align:right;font-family:'DM Mono',monospace;white-space:nowrap;font-size:11px;}
+table.t td:first-child{text-align:left;font-family:'Sarabun',sans-serif;font-size:12px;font-weight:600;color:var(--text);}
+table.t tr:last-child td{border-bottom:none;}
+table.t tr:hover td{background:rgba(200,190,180,.06);}
+.tp{color:#3a8a5a;font-weight:700;}.tn{color:#a84848;font-weight:700;}
+.tb{color:#3a6a90;}.ta{color:#8a6020;}.tm{color:var(--muted);}
+
+.divider{border:none;border-top:1px dashed var(--border);margin:20px 0 0;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--bg2);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+@media(max-width:900px){
+  .c2,.c3{grid-template-columns:1fr;}
+  .main{padding:10px 10px 40px;}
+  .fin-bar{top:58px;padding:6px 10px;}
+  .tab-nav{top:118px;}
+  .year-bar{top:158px;padding:6px 10px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-row">
+    <div>
+      <div class="hdr-title">📋 Financial Review Dashboard</div>
+      <div class="hdr-sub">ข้อมูลรายเดือน · ปี 66–69 · เลือกปีด้านล่าง</div>
+    </div>
+    <div class="badges" id="hdrBadges">
+      <span class="badge b-g" id="badgeInc">-</span>
+      <span class="badge b-b" id="badgeRW">-</span>
+      <span class="badge b-a" id="badgeAdmit">-</span>
+      <span class="badge b-r" id="badgeAlert">-</span>
+    </div>
+  </div>
+</div>
+
+<!-- STICKY FINANCE BAR -->
+<div class="fin-bar">
+  <div class="fin-item">
+    <div class="fin-lbl" id="fl1">เงินบำรุง</div>
+    <div class="fin-val" id="fv1">—</div>
+    <div class="fin-sub" id="fs1">—</div>
+    <div class="fin-strip sa"></div>
+  </div>
+  <div class="fin-item">
+    <div class="fin-lbl">เงินบำรุงหลังหักหนี้สิน</div>
+    <div class="fin-val" id="fv2">—</div>
+    <div class="fin-sub" id="fs2">—</div>
+    <div class="fin-strip sr"></div>
+  </div>
+  <div class="fin-item">
+    <div class="fin-lbl" id="fl3">ภาระหนี้สิน</div>
+    <div class="fin-val" id="fv3">—</div>
+    <div class="fin-sub" id="fs3">—</div>
+    <div class="fin-strip sr"></div>
+  </div>
+  <div class="fin-item">
+    <div class="fin-lbl">ลูกหนี้สะสม</div>
+    <div class="fin-val" id="fv4">—</div>
+    <div class="fin-sub" id="fs4">—</div>
+    <div class="fin-strip sb"></div>
+  </div>
+  <div class="fin-item">
+    <div class="fin-lbl">เงินบริจาค</div>
+    <div class="fin-val" id="fv5">—</div>
+    <div class="fin-sub" id="fs5">—</div>
+    <div class="fin-strip sg"></div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tab-nav">
+  <button class="tab-btn active" id="tab1btn" onclick="switchPage(1)">📊 หน้า 1 · Financial Review</button>
+  <button class="tab-btn p2" id="tab2btn" onclick="switchPage(2)">📈 หน้า 2 · Productivity แยกหน่วยงาน</button>
+</div>
+
+<!-- YEAR SELECTOR -->
+<div class="year-bar" id="yearBarContainer">
+  <span class="year-label">📅 เลือกปีงบประมาณ:</span>
+  <button class="yr-btn" id="yrBtn66" onclick="setYear('66')">ปี 2566</button>
+  <button class="yr-btn" id="yrBtn67" onclick="setYear('67')">ปี 2567</button>
+  <button class="yr-btn" id="yrBtn68" onclick="setYear('68')">ปี 2568</button>
+  <button class="yr-btn active" id="yrBtn69" onclick="setYear('69')">ปี 2569</button>
+  <span class="yr-note" id="yrNote">ข้อมูล 6 เดือน (ต.ค.–มี.ค.)</span>
+</div>
+
+<!-- ════════ PAGE 1 ════════ -->
+<div class="page active" id="page1">
+<div class="main">
+
+<div class="alert r" id="alertBox">⚠️ <span id="alertText">กำลังโหลดข้อมูล...</span></div>
+
+<!-- 1. เงินบำรุง -->
+<div class="sbar"><span class="stitle">1 · สถานะเงินบำรุง</span><span class="snote" id="s1note">—</span></div>
+<div class="cg c2">
+  <div class="cc"><div class="ct" id="ct_fd">เงินบำรุงคงเหลือ vs ภาระหนี้สิน</div><div class="cs" id="cs_fd">บาท รายเดือน</div><div class="cw h240"><canvas id="c_fund_debt"></canvas></div></div>
+  <div class="cc"><div class="ct">เงินบำรุงหลังหักหนี้สิน</div><div class="cs" id="cs_net">บาท รายเดือน</div><div class="cw h240"><canvas id="c_net"></canvas></div></div>
+</div>
+<div class="cg c2" style="margin-top:11px;">
+  <div class="cc"><div class="ct">ลูกหนี้ค่ารักษาพยาบาล (สะสม)</div><div class="cs" id="cs_ar">บาท รายเดือน</div><div class="cw h240"><canvas id="c_ar"></canvas></div></div>
+  <div class="cc"><div class="ct">เงินบริจาคคงเหลือ</div><div class="cs">บาท รายเดือน</div><div class="cw h240"><canvas id="c_donate"></canvas></div></div>
+</div>
+
+<!-- 2. IPD -->
+<hr class="divider">
+<div class="sbar p"><span class="stitle">2 · ตัวชี้วัด IPD รายเดือน</span><span class="snote">Adj.RW · อัตราครองเตียง · ยอดเงิน Admit · จำนวน Admit</span></div>
+<div class="cg c2">
+  <div class="cc"><div class="ct">Adjust RW รายเดือน</div><div class="cs" id="cs_rw">RW</div><div class="cw h200"><canvas id="c_rw"></canvas></div></div>
+  <div class="cc"><div class="ct">อัตราครองเตียง (BOR)</div><div class="cs">% · เส้นประ = เกณฑ์ 35%</div><div class="cw h200"><canvas id="c_bor"></canvas></div></div>
+</div>
+<div class="cg c2" style="margin-top:11px;">
+  <div class="cc"><div class="ct">ยอดเงิน Admit ผู้ป่วยในหลังหักค่าแรง</div><div class="cs">บาท รายเดือน</div><div class="cw h200"><canvas id="c_admitmoney"></canvas></div></div>
+  <div class="cc"><div class="ct">จำนวน Admit IPD รายเดือน</div><div class="cs" id="cs_admit">ราย</div><div class="cw h200"><canvas id="c_admit"></canvas></div></div>
+</div>
+
+<!-- 3. รายได้ -->
+<hr class="divider">
+<div class="sbar g"><span class="stitle">3 · รายได้เรียกเก็บรายเดือน</span><span class="snote">รายได้รวม · OPD / IPD / ทันตกรรม / กายภาพ / แผนไทย</span></div>
+<div class="cg c1">
+  <div class="cc"><div class="ct">รายได้เรียกเก็บรวมต่อเดือน</div><div class="cs" id="cs_inctotal">บาท รวมทุกหน่วยงาน</div><div class="cw h200"><canvas id="c_inc_total"></canvas></div></div>
+</div>
+<div class="cg c2" style="margin-top:11px;">
+  <div class="cc"><div class="ct">รายได้รวมแยกตามหน่วยงาน</div><div class="cs">บาท · OPD / IPD / ทันตกรรม / กายภาพ / แผนไทย</div><div class="cw h260"><canvas id="c_inc_dept"></canvas></div></div>
+  <div class="cc"><div class="ct">รายได้รวมแยกตามสิทธิ์</div><div class="cs">บาท · UC / ข้าราชการ / อปท / ปกส / พรบ</div><div class="cw h260"><canvas id="c_inc_type"></canvas></div></div>
+</div>
+<div class="cg c2" style="margin-top:11px;">
+  <div class="cc"><div class="ct">รายได้ IPD แยกสิทธิ์</div><div class="cs">บาท รายเดือน</div><div class="cw h220"><canvas id="c_ipd"></canvas></div></div>
+  <div class="cc"><div class="ct">รายได้ OPD แยกสิทธิ์</div><div class="cs">บาท รายเดือน</div><div class="cw h220"><canvas id="c_opd"></canvas></div></div>
+</div>
+<div class="cg c3" style="margin-top:11px;">
+  <div class="cc"><div class="ct">รายได้ทันตกรรม</div><div class="cs">บาท รายเดือน</div><div class="cw h180"><canvas id="c_dental"></canvas></div></div>
+  <div class="cc"><div class="ct">รายได้กายภาพบำบัด</div><div class="cs">บาท รายเดือน</div><div class="cw h180"><canvas id="c_phys"></canvas></div></div>
+  <div class="cc"><div class="ct">รายได้แผนไทย</div><div class="cs">บาท รายเดือน</div><div class="cw h180"><canvas id="c_thai"></canvas></div></div>
+</div>
+
+<!-- 4. รายจ่าย -->
+<hr class="divider">
+<div class="sbar a"><span class="stitle">4 · รายจ่ายค่าตอบแทนบุคลากร + วัสดุ Lab</span><span class="snote">กราฟเส้นตรงแยกรายการ</span></div>
+<div class="cg c1">
+  <div class="cc"><div class="ct">ค่าตอบแทนแยกรายการทุกกลุ่มงาน</div><div class="cs">บาท รายเดือน</div><div class="cw h280"><canvas id="c_exp_lines"></canvas></div></div>
+</div>
+
+<!-- 5. Unit Cost -->
+<hr class="divider">
+<div class="sbar t"><span class="stitle">5 · Unit Cost OPD และ IPD</span><span class="snote">บาทต่อครั้ง (OPD) · บาทต่อราย (IPD)</span></div>
+<div class="cg c2">
+  <div class="cc"><div class="ct">Unit Cost OPD</div><div class="cs" id="cs_uopd">บาทต่อครั้ง รายเดือน</div><div class="cw h200"><canvas id="c_ucost_opd"></canvas></div></div>
+  <div class="cc"><div class="ct">Unit Cost IPD</div><div class="cs" id="cs_uipd">บาทต่อราย รายเดือน</div><div class="cw h200"><canvas id="c_ucost_ipd"></canvas></div></div>
+</div>
+
+<!-- 6. ตาราง -->
+<hr class="divider">
+<div class="sbar r"><span class="stitle">6 · ตารางสรุปตัวชี้วัดสำคัญรายเดือน</span><span class="snote" id="s6note">หน่วย: บาท ยกเว้นระบุ</span></div>
+<div class="cc"><div class="tbl-wrap" id="tblArea"></div></div>
+
+</div></div><!-- /main /page1 -->
+
+<!-- ════════ PAGE 2 ════════ -->
+<div class="page" id="page2">
+<div class="main">
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px;margin-bottom:4px;" id="kpiRow2"></div>
+
+<!-- P2.1 ภาพรวม -->
+<div class="sbar g"><span class="stitle">1 · ภาพรวมรายได้รวม ย้อนหลัง 3 ปี (ปี 66–68)</span><span class="snote">รายได้รวม · แนวโน้มการเติบโต</span></div>
+<div class="cg c2">
+  <div class="cc"><div class="ct">รายได้รวมทั้งหมด ย้อนหลัง 3 ปี</div><div class="cs">บาท · ปี 66 / 67 / 68</div><div class="cw h220"><canvas id="p2_total"></canvas></div></div>
+  <div class="cc"><div class="ct">อัตราการเติบโตรายได้ ปี 67 → 68 แยกหน่วยงาน</div><div class="cs">% · สีเขียว = เพิ่ม / สีแดง = ลด</div><div class="cw h220"><canvas id="p2_growth"></canvas></div></div>
+</div>
+
+<!-- P2.2 IPD -->
+<hr class="divider">
+<div class="sbar p"><span class="stitle">2 · IPD (ผู้ป่วยใน) — Productivity ย้อนหลัง</span><span class="snote">รายได้ · Admit · Adj.RW · BOR · ปี 61–68</span></div>
+<div class="cg c2">
+  <div class="cc"><div class="ct">รายได้ IPD ย้อนหลัง 3 ปี</div><div class="cs">บาท · ปี 66 / 67 / 68</div><div class="cw h200"><canvas id="p2_ip_inc"></canvas></div></div>
+  <div class="cc"><div class="ct">Sum Adjust RW ย้อนหลัง</div><div class="cs">RW · ปี 61–68</div><div class="cw h200"><canvas id="p2_rw_hist"></canvas></div></div>
+</div>
+<div class="cg c2" style="margin-top:11px;">
+  <div class="cc"><div class="ct">ยอด Admit เฉลี่ยต่อเดือน ย้อนหลัง</div><div class="cs">ราย · ปี 61–68</div><div class="cw h200"><canvas id="p2_admit_hist"></canvas></div></div>
+  <div class="cc"><div class="ct">อัตราครองเตียง (BOR) ย้อนหลัง</div><div class="cs">% · ปี 61–68 · เส้นประ = เกณฑ์ 35%</div><div class="cw h200"><canvas id="p2_bor_hist"></canvas></div></div>
+</div>
+
+<!-- P2.3 OPD -->
+<hr class="divider">
+<div class="sbar a"><span class="stitle">3 · OPD (ผู้ป่วยนอก) — Productivity ย้อนหลัง</span><span class="snote">รายได้ OPD · Visit · รายได้เฉลี่ยต่อ Visit</span></div>
+<div class="cg c3">
+  <div class="cc"><div class="ct">รายได้ OPD ย้อนหลัง 3 ปี</div><div class="cs">บาท · ปี 66 / 67 / 68</div><div class="cw h200"><canvas id="p2_op_inc"></canvas></div></div>
+  <div class="cc"><div class="ct">จำนวน Visit ทั้งหมด (ข้าราชการ/อปท)</div><div class="cs">ครั้ง · ปี 65 / 66 / 67</div><div class="cw h200"><canvas id="p2_gov_visits"></canvas></div></div>
+  <div class="cc"><div class="ct">รายได้เฉลี่ยต่อ 1 Visit (ข้าราชการ/อปท)</div><div class="cs">บาท/ครั้ง · ปี 65 / 66 / 67</div><div class="cw h200"><canvas id="p2_gov_rev_visit"></canvas></div></div>
+</div>
+
+<!-- P2.4 ทันตกรรม -->
+<hr class="divider">
+<div class="sbar a" style="border-color:var(--amber);background:linear-gradient(90deg,var(--amber-bg),transparent);"><span class="stitle">4 · ทันตกรรม — Productivity ย้อนหลัง</span><span class="snote">รายได้ · Visit · รายได้เฉลี่ยต่อ Visit</span></div>
+<div class="cg c3">
+  <div class="cc"><div class="ct">รายได้ทันตกรรม ย้อนหลัง 3 ปี</div><div class="cs">บาท · ปี 66 / 67 / 68</div><div class="cw h200"><canvas id="p2_dent_inc"></canvas></div></div>
+  <div class="cc"><div class="ct">Visit ทันตกรรม (ข้าราชการ/อปท)</div><div class="cs">ครั้ง · ปี 65 / 66 / 67</div><div class="cw h200"><canvas id="p2_dent_visits"></canvas></div></div>
+  <div class="cc"><div class="ct">รายได้เฉลี่ยต่อ Visit ทันตกรรม</div><div class="cs">บาท/ครั้ง · ปี 65 / 66 / 67</div><div class="cw h200"><canvas id="p2_dent_rev"></canvas></div></div>
+</div>
+
+<!-- P2.5 แผนไทย -->
+<hr class="divider">
+<div class="sbar t"><span class="stitle">5 · แผนไทย — Productivity ย้อนหลัง</span><span class="snote">รายได้ · Visit · รายได้เฉลี่ยต่อ Visit</span></div>
+<div class="cg c3">
+  <div class="cc"><div class="ct">รายได้แผนไทย ย้อนหลัง 3 ปี</div><div class="cs">บาท · ปี 66 / 67 / 68</div><div class="cw h200"><canvas id="p2_thai_inc"></canvas></div></div>
+  <div class="cc"><div class="ct">Visit แผนไทย (ข้าราชการ/อปท)</div><div class="cs">ครั้ง · ปี 65 / 66 / 67</div><div class="cw h200"><canvas id="p2_thai_visits"></canvas></div></div>
+  <div class="cc"><div class="ct">รายได้เฉลี่ยต่อ Visit แผนไทย</div><div class="cs">บาท/ครั้ง · ปี 65 / 66 / 67</div><div class="cw h200"><canvas id="p2_thai_rev"></canvas></div></div>
+</div>
+
+<!-- P2.6 กายภาพ -->
+<hr class="divider">
+<div class="sbar" style="border-color:var(--purple);background:linear-gradient(90deg,var(--purple-bg),transparent);"><span class="stitle">6 · กายภาพบำบัด — Productivity ย้อนหลัง</span><span class="snote">รายได้ · Visit · รายได้เฉลี่ยต่อ Visit</span></div>
+<div class="cg c3">
+  <div class="cc"><div class="ct">รายได้กายภาพ ย้อนหลัง 3 ปี</div><div class="cs">บาท · ปี 66 / 67 / 68</div><div class="cw h200"><canvas id="p2_phys_inc"></canvas></div></div>
+  <div class="cc"><div class="ct">Visit กายภาพ (ข้าราชการ/อปท)</div><div class="cs">ครั้ง · ปี 65 / 66 / 67</div><div class="cw h200"><canvas id="p2_phys_visits"></canvas></div></div>
+  <div class="cc"><div class="ct">รายได้เฉลี่ยต่อ Visit กายภาพ</div><div class="cs">บาท/ครั้ง · ปี 65 / 66 / 67</div><div class="cw h200"><canvas id="p2_phys_rev"></canvas></div></div>
+</div>
+
+<!-- P2.7 PP Fee -->
+<hr class="divider">
+<div class="sbar s"><span class="stitle">7 · PP Fee Schedule — บริการส่งเสริมสุขภาพ ย้อนหลัง 3 ปี</span><span class="snote">ปี 66 / 67 / 68</span></div>
+<div class="cg c1">
+  <div class="cc"><div class="ct">รายได้ PP Fee Schedule แยกบริการ</div><div class="cs">บาท · กราฟเส้นตรง</div><div class="cw h260"><canvas id="p2_pp_line"></canvas></div></div>
+</div>
+
+<!-- P2.8 ตาราง -->
+<hr class="divider">
+<div class="sbar r"><span class="stitle">8 · ตารางสรุป Productivity แยกหน่วยงาน</span><span class="snote">ปี 66 / 67 / 68</span></div>
+<div class="cc"><div class="tbl-wrap" id="tblArea2"></div></div>
+
+</div></div><!-- /main /page2 -->
+
+<script>
+Chart.defaults.font.family="'Sarabun',sans-serif";
+Chart.defaults.color='#a09080';
+
+/* ══════════════════════════════════════════
+   DATA DEFINITIONS — All years
+══════════════════════════════════════════ */
+const MONTHS_12=['ต.ค.','พ.ย.','ธ.ค.','ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.'];
+const MONTHS_6=['ต.ค.','พ.ย.','ธ.ค.','ม.ค.','ก.พ.','มี.ค.'];
+
+const D={
+  '66':{
+    months:MONTHS_12,
+    netFund:[4939656.66,4348444.30,3169125.25,6310818.57,5773321.80,7255077.68,7098158.82,3444860.13,2477294.85,530847.05,5971222.87,4904761.38],
+    fund:null, debt:null,
+    ar:null,
+    donate:[null,null,null,null,null,null,null,2089544.44,null,null,2073836.03,2177250.96],
+    adjRW:[83.71,83.88,77.23,66.43,88.97,97.96,72.09,62.22,66.85,72.43,58.62,84.35],
+    bor:[39.75,45.91,37.15,34.30,44.29,47.53,39.89,30.65,40.44,44.95,28.06,41.78],
+    admitMoney:[281697,281549,192316.50,127428,273592,394843,207885.50,28553.50,264236,332466.50,162379,377854.25],
+    admitCount:[145,167,145,137,161,178,144,115,136,138,115,150],
+    expNurse:[223530,279630,331920,305945,298838.75,286817.50,332665,416598.13,202175,225286.25,216560,212017.50],
+    expDental:[5900,6750,4500,4500,4900,3845,4750,7045,6280,11030,8415,11190],
+    expAdmin:[31162.50,28305,28057.50,28057.50,30513.75,30085,31786.25,33189.37,32393.75,33906.25,31833.75,33793.75],
+    expDriver:null,expIT:null,expMaid:null,
+    expThai:[2400,2100,1500,1500,300,975,975,4225,10075,10400,11700,11375],
+    expTech:[44520,36090,42870,42870,38490,34175,41095,50850,39335,46990,45040,42100],
+    expCard:[9097.50,5910,12645,12645,6412.50,5857.50,6211.25,9420,8656.25,13878.75,8246.25,6696.25],
+    expGuard:null,expMed:null,
+    expLab:[54021.65,247758.25,368026.05,149569,15496,131401.50,12986.80,118189.50,221712.50,156013.30,45163.50,208091],
+    incTotal:[1200815.31,1013595,1141885.25,872529.25,727191,710776.89,715602.94,664923.94,900811.23,970219,930546.75,714603],
+    incOPD:[291050.75,null,319166.50,273815.25,142507.50,152398.39,176301.19,174080.19,214438.23,214413.25,173154,142352.75],
+    incIPD:[804930.06,509272.50,705869.75,468482,463252.50,469086.50,392521.75,356012.25,545235,543203.25,550272.75,392403.75],
+    incDent:[49416,84807,70751,89966,80327,61791,80133,39993.50,51168,78716.50,80499.50,56863],
+    incPhys:[38935,29020,36384,29700,29725,20601,50170,72120,68855,103645,104044,101079],
+    incThai:[16483.50,14221,9714,10566,11379,6900,16477,22718,21115,30241,22576.50,21904.50],
+    incUC:[820281.81,546829.25,618329.25,461071.75,465147,488959.64,322629.94,315629.94,531920.73,556841.75,526469.75,396118.25],
+    incGov:[165352.50,285476.75,239945,221124.75,210090,163376,302727.50,283172.50,256964,321684,334735,264908.75],
+    incLoc:[50632,31911,62289.50,35293.75,0,14213.25,30652.50,26648.50,34106.50,40682.25,38663.50,43290.50],
+    incSSO:[141140,133166,198031.50,120885,16168,15265,12928,11178,14805,17888,8143,118276],
+    incPRB:[14369,0,9904,13768,8581,19423,14269,16945,50386,14213,10659,13814],
+    ipd_uc:[750884.06,458962.50,581805.50,419560.50,431324.50,436410,283560,283560,485803.50,495608.75,492515.75,377399.75],
+    ipd_gov:[null,13892.25,30793,36672,15809,27572,28933.50,93630.75,72452.25,44752.50,37923,52991],
+    ipd_loc:[8479.75,4855,47124.25,13502.50,0,0,9958,0,9480,3213.50,4766,0],
+    ipd_sso:[27892,14662,35518,9777,0,0,0,0,5199,6458,0,1154],
+    ipd_prb:[3782,0,4750,9833,4356,3743,5373,0,0,0,0,2834],
+    opd_uc:[66797.75,83966.75,27223.75,28811.25,26622.50,35449.64,32069.94,32069.94,43517.23,58633,33954,18718.50],
+    opd_gov:[92425.75,170547.75,125525,127769.75,109441,87026.50,116797.75,109668.75,104977.50,120078.50,117281,111649.25],
+    opd_loc:[13892.25,16716,10105.25,10791.25,0,12827.25,15102.50,14538.50,12651.50,20828.75,8977,0],
+    opd_sso:[107348,105044,151158.50,102508,2219,1415,3435,858,2906,660,2283,1005],
+    opd_prb:[10587,0,5154,3935,4225,15680,8896,16945,50386,14213,10659,10980],
+    dent_gov:[27276,49695,36710,40550,31973,21301,41917,17633.50,22399,39266.50,55300,19260],
+    dent_loc:[4600,1540,0,7730,0,0,300,690,6840,7170,6957.50,7463],
+    dent_sso:[5900,13460,11355,8600,13949,13850,9493,10320,6700,10770,5860,5860],
+    dent_else:[9040,16212,13386,20386,27205,9540,21423,11350,12629,18910,12382,24280],
+    phys_gov:[21080,22940,31824,26960,29725,19215,47630,63000,64835,102045,93824,101079],
+    phys_loc:[17855,6080,4560,2740,0,1386,2540,9120,4020,1600,10220,0],
+    thai_gov:[10678.50,11501,9214,10036,11379,6900,13725,20418,20000,22371,15339,21904.50],
+    thai_loc:[5805,2720,500,530,0,0,2752,2300,1115,7870,7237.50,0],
+    unitOPD:[872.76,950.13,878.52,944.72,1060.66,1095.56,1056.16,1081.79,1082.77,1083.36,1073.60,1078.94],
+    unitIPD:[19715.54,16662.33,21976.63,22823.56,17439.66,17516.81,17927.24,18234.64,18436.44,18469.43,18669.96,18301.52],
+    ar_types:null,
+    finBar:{v1:'4.90M',s1:'ก.ย. 2566',v2:'4.90M',s2:'ก.ย. 2566 (มีข้อมูล)',v3:'—',s3:'ไม่มีข้อมูล',v4:'—',s4:'ไม่มีข้อมูล',v5:'2.18M',s5:'ก.ย. 2566'},
+    alertText:'ปี 66: เงินบำรุงหักหนี้สินเป็นบวกตลอดปี — สถานการณ์ทางการเงินอยู่ในระดับดี',
+    alertClass:'r', alertHide:true,
+    note:'ข้อมูลครบ 12 เดือน (ต.ค. 65 – ก.ย. 66)', noteShort:'12 เดือน',
+    badgeInc:'10,563,500 บ.',badgeRW:'Adj.RW 914.74',badgeAdmit:'Admit 1,731 ราย',badgeAlert:'สถานะดี ✅',
+  },
+  '67':{
+    months:MONTHS_12,
+    netFund:[5674150.55,5677243.06,4478693.53,2749148.05,4347297.72,4021304.71,3049381.77,2095247.13,490475.80,2163697.71,202337.08,null],
+    fund:null, debt:null,
+    ar:null,
+    donate:[1849443.47,1846350.96,1846350.96,2259663.84,1783613.84,1778663.84,1988663.84,1988663.84,1988663.84,1988663.84,1994242.35,1994242.35],
+    adjRW:[79.48,70.34,66.04,86.77,67.87,83.53,74.16,64.60,58.12,57.64,46.64,52.40],
+    bor:[40.75,41.67,31.29,37.85,33.15,37.20,35.45,31.05,25.10,28.73,23.29,23.12],
+    admitMoney:[301549.75,366900.50,234630,184025.99,206527.25,305904.75,232656.25,161588.50,113544.75,122203.25,34704.75,39474.75],
+    admitCount:[153,143,127,154,124,143,123,112,104,113,94,105],
+    expNurse:[222277.50,212655,281181.25,228896.26,204542.50,211517.50,278920.60,232606.25,231680,235215,227820,223172.50],
+    expDental:[9225,11565,7955,9990,17645,16670,8390,14865,15305,14760,6050,9340],
+    expAdmin:[34865,32393.75,34890,33847.50,32767.50,0,2096.25,4858.75,3152.50,325,1137.50,731.25],
+    expDriver:[null,null,null,null,null,27802.50,25492.50,25740,28380,30607.50,29205,25905],
+    expIT:[null,null,null,null,null,5850,0,6743.75,3900,2275,1787.50,1300],
+    expMaid:[null,null,null,null,null,3300,3960,3630,3630,3300,3300,2970],
+    expThai:[12025,13000,9425,12675,10400,11700,7475,8450,9425,9100,10075,11050],
+    expTech:[47680,40385,50060,44100,43425,47510,50235,45360,48365,47160,45790,44970],
+    expCard:[9166.25,7267.50,10375,20120,18347.50,1790,5281.20,650,0,0,0,4550],
+    expGuard:[null,null,null,null,null,10560,9900,10560,9900,10560,10560,9900],
+    expMed:[9166.25,7267.50,10375,20120,18347.50,1790,5281.20,650,0,0,0,4550],
+    expLab:[103113,39748.50,195703.50,138520,61998,103902.50,142533.50,139859,125001,51043.50,195666,105936.50],
+    incTotal:[1260020.66,882421.92,970232.10,861392,922123.60,792346.45,356472.25,376427,1161014.50,631996.25,974976.25,580179],
+    incOPD:[343778.91,192921.13,195649.85,185985,230934.10,194473.95,141331,142930.25,165048.50,190998.75,189781,162760.75],
+    incIPD:[615140.25,450685.79,537770.75,455545.50,480285.50,373983.50,60045.25,90017.25,782477.50,219906,664744.75,234625.25],
+    incDent:[131711,92890,94819,101298,89090,111215,80554,90992,122740,102759,35436.50,89551],
+    incPhys:[117608,113557,113545,89720,99630,84460,56975,37000,69780,96000,68290,65627],
+    incThai:[51782.50,32368,28447.50,28843.50,22184,28214,17567,15487.50,20968.50,22332.50,16724,27615],
+    incUC:[633324.91,403209.42,496751.35,422706.25,434913.35,334659.45,0,0,754380,213849,646073.50,216640.25],
+    incGov:[525278,366939.25,387873.75,374267.75,396746.25,377792,297191.50,272316,309736,336709.50,280725.75,287896],
+    incLoc:[59464.75,32974.25,36653,28979,58554,51917,39579.75,48680,44229.50,52357.75,59738,168316.75],
+    incSSO:[19042.75,5895,9441,18660,5059,10849,5080,9175,8430,6120,9864,75273],
+    incPRB:[13167,57284,21035,1422,13751,6289,0,39656,31331,11631,4055,5081],
+    ipd_uc:[514974.25,388226.54,452547.25,364161,417031.25,308490.50,0,0,754380,187421,584044.50,185895.25],
+    ipd_gov:[90363.25,52135.25,76446.50,70874.50,43190.75,64300,60045.25,76457.25,18062.50,21739,80700.25,45499],
+    ipd_loc:[9802.75,0,3661,7693,11086.50,0,0,7040,0,10746,0,0],
+    ipd_sso:[0,0,0,12817,0,1193,0,0,0,0,0,0],
+    ipd_prb:[0,10324,5116,0,8977,0,0,6520,10035,0,0,3231],
+    opd_uc:[74450.66,14982.88,31604.10,38845.25,13482.10,23168.95,0,0,0,26428,62029,30745],
+    opd_gov:[229604.75,119877.50,130498.75,133751.75,175566.50,141958,124427.25,97419.25,125173,143038,100595,114247.50],
+    opd_loc:[22296.50,10425.75,14127,11806,36122.50,20022,16903.75,12020,18579.50,9901.75,22518,15918.25],
+    opd_sso:[4260,675,3501,160,989,3036,0,355,0,0,584,0],
+    opd_prb:[13167,46960,15919,1422,4774,6289,0,33136,21296,11631,4055,1850],
+    dent_gov:[55825,59579,45901,56778,67270,69725,57528,56262,87872,74920,25596.50,45495],
+    dent_loc:[7460,11971,11900,3780,250,21030,12540,19310,13530,10390,3610,26040],
+    dent_sso:[4980,5220,5940,5683,4070,6620,5080,8820,8430,6120,5030,9280],
+    dent_else:[19546,16120,18478,15357,13100,10840,5406,6600,12908,11329,1200,8736],
+    phys_gov:[106688,105897,109325,85620,92230,76500,51015,28660,61460,81980,58330,59187],
+    phys_loc:[10920,7660,4220,4100,7400,7960,5960,8340,8320,14020,9960,6440],
+    thai_gov:[42797,29450.50,25702.50,27243.50,18489,25309,13391,13517.50,17168.50,15032.50,15504,23467.50],
+    thai_loc:[8985.50,2917.50,2745,1600,3695,2905,4176,1970,3800,7300,1220,4147.50],
+    unitOPD:[1091.38,948.35,983.46,977.83,1017.84,1025.87,1180.69,1149.53,1134.97,993.89,987.55,993.54],
+    unitIPD:[7429.58,12162.45,13954.67,13486.44,13896.62,13745.97,16143.30,16437.31,16612.28,14435.18,15517.69,15593.03],
+    ar_types:null,
+    finBar:{v1:'202K',s1:'ส.ค. 2567 (มีข้อมูล)',v2:'202K',s2:'ส.ค. 2567',v3:'—',s3:'ไม่มีข้อมูล',v4:'—',s4:'ไม่มีข้อมูล',v5:'1.99M',s5:'ก.ย. 2567'},
+    alertText:'ปี 67: เงินบำรุงหักหนี้สินลดลงต่อเนื่อง — ส.ค. เหลือเพียง 202K บาท ควรติดตาม',
+    alertClass:'r', alertHide:false,
+    note:'ข้อมูลครบ 12 เดือน (ต.ค. 66 – ก.ย. 67)', noteShort:'12 เดือน',
+    badgeInc:'9,769,602 บ.',badgeRW:'Adj.RW 807.59',badgeAdmit:'Admit 1,495 ราย',badgeAlert:'เงินบำรุงลดลง ⚠️',
+  },
+  '68':{
+    months:MONTHS_12,
+    netFund:[2742506.69,5296023.65,2906464.46,2596321.40,1993706.19,1530055.55,-316765.54,-407842.15,-2886244.58,-3195348.88,-2702401.73,-644466.52],
+    fund:null, debt:null,
+    ar:null,
+    donate:[1994242.35,2094242.35,2094242.35,2100049.25,2100049.25,2110049.25,2110049.25,2162941.20,2115545.25,2121054.12,2124064.12,2124064.12],
+    adjRW:[55.14,51.56,47.11,36.11,50.85,77.62,64.77,58.08,82.05,86.42,73.46,80.38],
+    bor:[27.02,25.52,23.79,22.58,27.90,31.85,29.79,30.44,34.69,37.10,32.36,32.81],
+    admitMoney:[84363.25,65198.50,25762,46394.50,72972.25,211711,72085.61,1176899.75,1446084,273090,241600.25,166292],
+    admitCount:[106,106,105,100,116,136,132,128,149,177,158,149],
+    expNurse:[225272.50,214730,286408.75,251048.75,211765,235425,309929.39,243420,219600,239991.25,203822.50,239530],
+    expDental:[11235,9875,8115,10900,12475,12910,10295,12150,14655,10525,8130,5400],
+    expAdmin:[3900,2307.50,0,400,940,2240,1020,2880,1020,820,200,420],
+    expDriver:[29493.75,30930,31556.25,27421.25,29455,27610,27460,28320,27135,29595,25250,30625],
+    expIT:[2600,5443.75,6418.75,630,420,950,1050,2280,1260,1880,2520,1240],
+    expMaid:[3300,2970,4290,2970,2970,3300,3960,3960,3630,3630,2640,3960],
+    expThai:[10400,9750,8125,9750,10725,10725,10725,9100,10075,10400,12675,8450],
+    expTech:[47700,43570,53320,44405,45260,48165,51650,49825,49445,49645,43925,54280],
+    expCard:[12470,7176.25,7980,9857.50,8046.25,8721.25,9718.75,9451.25,9453.75,9868.75,7491.25,10117.50],
+    expGuard:[9900,9900,10560,10560,8580,10560,9900,10560,9900,10560,10560,10560],
+    expMed:[0,6535,650,1800,10600,3850,0,0,3360,0,0,0],
+    expLab:[127348.50,107494.50,67278,124321,128271.50,227231.75,84054,315763,149849.75,102570,78720.50,181536],
+    incTotal:[739091.75,489724.50,673483.25,580734.75,768041.25,1048219.50,832683,794660.50,1044710,1092494.75,929258.25,1014460.50],
+    incOPD:[198231.50,207749,177346.75,114656.75,300202.25,287547,194288.25,198748.75,269105.75,337793.25,291548.25,339802.50],
+    incIPD:[369790.75,158483.50,359607,323200,291194,533148,461665.75,419701.75,551513.75,566376.50,526365,502664],
+    incDent:[111668,70463.50,67010,72013,62763,91115.50,74919,76666,88624.50,69148,40191,51580],
+    incPhys:[34600,31750,49730,53610,91695,114133,85452,79435,110471,94885,47762,93801.50],
+    incThai:[24801.50,21278.50,19789.50,17255,22187,22276,16358,20109,24995,24292,23392,26612.50],
+    incUC:[447847.25,166913,343451.25,305722,221897.75,456070,407812,396485.25,451902,471125.75,452942,421530.25],
+    incGov:[228251,219464,239459,200551.75,443434,496819.50,328315,297630,433659.25,350137,270726.25,378768.75],
+    incLoc:[31735.50,39236.50,52474,34990,69464.50,70131,52682.50,67567.50,89549,59239.25,57103.50,208465.50],
+    incSSO:[4575,10794,6392,19326,8838,4210,17481.50,15173.75,42636.75,185819.75,136261.50,191468],
+    incPRB:[10741,43632,23477,16562,18889,15299,14735,9425,14063,19223,8894,12427],
+    ipd_uc:[348546.25,131296,308254.25,287552,192311.75,443106,394678,389765.25,441593,463584.75,439348,417031.25],
+    ipd_gov:[21244.50,21244.50,34511.25,10974,89260.25,86458,42782.25,25502.50,77517.25,45352,40315.25,58703.25],
+    ipd_loc:[0,0,4383.50,4304,9622,0,11302,0,3457,11966,3858.25,3749],
+    ipd_sso:[0,2619,0,13186,0,0,12903.50,0,26818.50,45473.75,36739.50,18577.50],
+    ipd_prb:[0,3324,12458,7184,0,3584,0,4434,2128,0,6104,4603],
+    opd_uc:[68301,35617,35197,18170,29586,12964,13134,6720,10309,7541,13594,4499],
+    opd_gov:[111386.50,114514,115678.25,81322.75,224944.75,225626,151419.75,151533.50,205953.50,166244,153494.50,209537.50],
+    opd_loc:[7498,14154,15100.50,5466,26782.50,37242,14999.50,26031.50,30280,12307.25,31327.75,18655.50],
+    opd_sso:[305,3156,352,320,0,0,0,9472.75,10628.25,132478,90342,99286.50],
+    opd_prb:[10741,40308,11019,9378,18889,11715,14735,4991,11935,19223,2790,7824],
+    dent_gov:[45326,39329.50,37740,58360,31750,72955.50,53880,46406,44657.50,43790,22380,29140],
+    dent_loc:[15130,16430,15000,4250,16657,8260,10720,16180,25877,10540,2691,5300],
+    dent_sso:[4270,5019,6040,5820,8838,4210,4578,5701,5190,7868,6890,9180],
+    dent_else:[15942,9685,8230,3583,5518,5690,5741,8379,12900,6950,8230,7960],
+    phys_gov:[30190,28630,38610,37430,82070,95553,75012,61635,86511,74905,38772,62071.50],
+    phys_loc:[4410,3120,11120,16180,9625,18580,10440,17800,23960,19980,8990,31730],
+    thai_gov:[20104,15746,12919.50,12465,15409,16227,11137,12553,19020,19846,15764.50,19316.50],
+    thai_loc:[4697.50,5532.50,6870,4790,6778,6049,5221,7556,5975,4446,7627.50,7296],
+    unitOPD:[1255.61,1328.52,1306.95,1727.84,1574.58,1432.12,1442.30,1412.02,1375.48,1328.47,1301.49,1280.30],
+    unitIPD:[26110.30,19016.71,19483.76,26573.34,24097.39,20656.35,20714.60,20707.58,20221.71,19686.88,19425.49,18714.41],
+    ar_types:null,
+    finBar:{v1:'-644K',s1:'ก.ย. 2568 (ติดลบ)',v2:'-644K',s2:'ก.ย. 2568',v3:'—',s3:'ไม่มีข้อมูล',v4:'—',s4:'ไม่มีข้อมูล',v5:'2.12M',s5:'ก.ย. 2568'},
+    alertText:'ปี 68: เงินบำรุงหักหนี้สิน ติดลบตั้งแต่ เม.ย. — สิ้นปี (ก.ย.) ติดลบ -644,467 บาท',
+    alertClass:'r', alertHide:false,
+    note:'ข้อมูลครบ 12 เดือน (ต.ค. 67 – ก.ย. 68)', noteShort:'12 เดือน',
+    badgeInc:'10,007,562 บ.',badgeRW:'Adj.RW 763.55',badgeAdmit:'Admit 1,562 ราย',badgeAlert:'เงินบำรุงติดลบ ⚠️',
+  },
+  '69':{
+    months:MONTHS_6,
+    netFund:[-2743986.17,-2688482.34,-3561062.74,-4487718.34,-1198952.14,null],
+    fund:[4056970.23,3701089.49,3408346.14,3554799.81,7324525.92,null],
+    debt:[6800956.40,6389571.83,6969408.88,8042518.15,8523478.06,null],
+    ar_out:[7728488.37,8288116.62,8974138.87,7166103.87,7163765.87,null],
+    ar_uc:[1001810.25,1144336.50,515126.75,1010772.25,457557.00,null],
+    ar_sso:[969197.00,1082621.50,1245371.75,949151.50,1110600.75,null],
+    ar_gov:[1184197.25,1069895.00,987977.49,1011187.24,1109271.74,null],
+    ar_other:[267069.50,326752.50,339425.00,268732.00,261958.25,null],
+    donate:[2134064.12,2384064.12,2386564.12,1410521.12,1440531.12,null],
+    adjRW:[100.47,91.77,78.33,93.98,59.64,83.26],
+    bor:[38.00,41.25,28.02,33.37,25.22,35.38],
+    admitMoney:[336952.25,190816,272834,61755,121888.25,240499.50],
+    admitCount:[173,175,149,182,115,150],
+    expNurse:[216745,224461.25,236935,236885,198657.50,222780],
+    expDental:[13465,14610,7020,4900,7350,9310],
+    expAdmin:[1420,1640,1000,420,820,2240],
+    expDriver:[28875,28335,29885,30220,24750,28335],
+    expIT:[2080,3530,1880,1680,840,2100],
+    expMaid:[3300,3300,3630,3630,2640,3300],
+    expThai:[11050,10725,11700,11050,9425,12350],
+    expTech:[50015,47065,48985,48295,36685,44755],
+    expCard:[9782.50,9278.75,10457.50,9302.50,6428.75,8943.75],
+    expGuard:[10560,9900,10560,10560,8580,10560],
+    expMed:[0,600,1200,0,0,0],
+    expLab:[23519,177974.50,88914,299578.07,247175.50,null],
+    incTotal:[1117051.25,1153396.25,1014956.50,1028811.75,803451.50,1147192.25],
+    incOPD:[310759.50,301813,353698.75,326240.50,272619.50,381177.25],
+    incIPD:[636613.75,651734.25,467910.75,539433.75,355377,495940],
+    incDent:[78054,123146,70948,41876,30793.50,52840],
+    incPhys:[63732,47679,90594,90082,101351,179001],
+    incThai:[27892,29024,31805,31179.50,43310.50,38234],
+    incUC:[508620.25,551814.50,378242.75,471796.50,275319,441161.50],
+    incGov:[371698,378034.50,398982.75,352289,434513.50,508114.75],
+    incLoc:[46688.75,61949.25,49204.75,61157.25,32190.50,23966.50],
+    incSSO:[108900.50,124186,161759.25,137066,47032.25,162905.50],
+    incPRB:[22935,22533,13715,6503,14396.25,11044],
+    ipd_uc:[495406.25,543264.50,362890.75,460072.50,250772,417632.50],
+    ipd_gov:[76304.75,65963.25,37921,26326.50,63479,32679.75],
+    ipd_loc:[5134.50,8764.50,8550,20366.50,0,0],
+    ipd_sso:[55335.25,28657,54265,30432.25,34773.75,38335.75],
+    ipd_prb:[4433,5085,4284,2236,6352.25,7292],
+    opd_uc:[13214,8550,15352,11724,24547,23529],
+    opd_gov:[167021.25,159434.25,214268.75,195875.50,214538.50,211580],
+    opd_loc:[13864.25,32859.75,14372.75,16888.25,13231.50,17746.50],
+    opd_sso:[98158,83521,100274.25,97485.75,12258.50,124569.75],
+    opd_prb:[18502,17448,9431,4267,8044,3752],
+    dent_gov:[55038,84251,38450,30258,29413.50,50740],
+    dent_loc:[9400,12008,12226,2470,1380,2100],
+    dent_sso:[5608,12008,7220,9148,0,0],
+    dent_else:[8008,14879,13052,0,0,0],
+    phys_gov:[50947,45849,80674,74022,88331,179001],
+    phys_loc:[12785,1830,9920,16060,13020,0],
+    thai_gov:[22387,22537,27669,25807,38751.50,34114],
+    thai_loc:[5505,6487,4136,5372.50,4559,4120],
+    unitOPD:[976.37,1016.64,1066.71,1106.30,null,null],
+    unitIPD:[13291.11,14923.94,14476.86,14500.18,null,null],
+    finBar:{v1:'7.32M',s1:'ก.พ. 2569',v2:'-1.20M',s2:'⚠️ มี.ค. 2569',v3:'8.52M',s3:'ก.พ. 2569',v4:'10.10M',s4:'รวมทุกสิทธิ์ ก.พ.',v5:'1.44M',s5:'ก.พ. 2569'},
+    alertText:'ปี 69: เงินบำรุงคงเหลือหลังหักหนี้สิน ติดลบทุกเดือน — มี.ค. ติดลบ -1,198,952 บาท ควรเร่งแก้ไข',
+    alertClass:'r', alertHide:false,
+    note:'ข้อมูล 6 เดือน (ต.ค. 68 – มี.ค. 69)', noteShort:'6 เดือน',
+    badgeInc:'6,264,860 บ.',badgeRW:'Adj.RW 507.45',badgeAdmit:'Admit 944 ราย',badgeAlert:'เงินบำรุงติดลบ ⚠️',
+  }
+};
+
+/* ══ UTILS ══ */
+const sum=a=>a.filter(v=>v!=null).reduce((s,v)=>s+v,0);
+const avg=a=>{const f=a.filter(v=>v!=null);return f.length?f.reduce((s,v)=>s+v,0)/f.length:null;};
+const fmtN=(n,d=2)=>n==null||isNaN(n)?'—':Number(n).toLocaleString('th-TH',{minimumFractionDigits:d,maximumFractionDigits:d});
+const fmtS=v=>{if(v==null)return '—';const a=Math.abs(v);const s=v<0?'-':'';if(a>=1e6)return s+(a/1e6).toFixed(2)+'M';if(a>=1e3)return s+(a/1e3).toFixed(0)+'K';return Math.round(v).toString();};
+
+/* ══ PALETTE ══ */
+const P={
+  b:['rgba(122,179,212,.82)','rgba(90,155,196,1)'],
+  g:['rgba(122,190,155,.82)','rgba(80,170,120,1)'],
+  r:['rgba(217,128,128,.82)','rgba(195,90,90,1)'],
+  a:['rgba(212,168,106,.82)','rgba(190,140,70,1)'],
+  p:['rgba(160,138,184,.82)','rgba(130,105,160,1)'],
+  ro:['rgba(200,136,154,.82)','rgba(175,100,120,1)'],
+  t:['rgba(122,184,184,.82)','rgba(85,160,160,1)'],
+  s:['rgba(200,175,140,.82)','rgba(170,145,105,1)'],
+};
+
+/* ══ CHART ENGINE ══ */
+const CH={};
+function mk(id,type,labels,datasets,opts={}){
+  if(CH[id])CH[id].destroy();
+  const el=document.getElementById(id);if(!el)return;
+  CH[id]=new Chart(el,{type,data:{labels,datasets},options:{
+    responsive:true,maintainAspectRatio:false,spanGaps:true,
+    plugins:{
+      legend:{display:opts.lg!==false,position:'bottom',labels:{color:'#a09080',font:{family:'Sarabun',size:10},boxWidth:10,padding:7}},
+      tooltip:{backgroundColor:'#fdfaf7',borderColor:'#ddd5ca',borderWidth:1,titleColor:'#3a2e24',bodyColor:'#7a6858',padding:8,
+        callbacks:{label:ctx=>{const v=ctx.raw;if(v==null)return '';
+          if(opts.u==='%')return ` ${Number(v).toFixed(2)}%`;
+          if(opts.u==='rw')return ` ${Number(v).toFixed(2)} RW`;
+          if(opts.u==='n')return ` ${Number(v).toLocaleString()} ราย`;
+          if(opts.u==='bv')return ` ${Number(v).toLocaleString()} บาท/visit`;
+          if(opts.u==='v')return ` ${Number(v).toLocaleString()} ครั้ง`;
+          return ` ${Number(v).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2})} บาท`;}}}
+    },
+    scales:(type==='pie'||type==='doughnut')?{}:{
+      x:{grid:{color:'rgba(200,185,170,.18)'},ticks:{color:'#a09080',font:{family:'Sarabun',size:10}}},
+      y:{grid:{color:'rgba(200,185,170,.18)'},ticks:{color:'#a09080',font:{family:'DM Mono',size:10},
+        callback:v=>{if(opts.u==='%'||opts.u==='rw')return v;return fmtS(v);}}}
+    }
+  }});
+}
+
+function ln(lbl,data,c,fill=false){
+  return{label:lbl,data,borderColor:c[1],backgroundColor:fill?c[0].replace('.82','.15'):'transparent',
+    fill,tension:0,pointRadius:5,pointBackgroundColor:c[1],borderWidth:2,spanGaps:true};
+}
+function bar(lbl,data,c,sk=''){
+  const d={label:lbl,data,backgroundColor:c[0],borderColor:c[1],borderWidth:1,borderRadius:4};
+  if(sk)d.stack=sk;return d;
+}
+
+function noData(id){
+  if(CH[id])CH[id].destroy();
+  const el=document.getElementById(id);if(!el)return;
+  const ctx=el.getContext('2d');ctx.clearRect(0,0,el.width,el.height);
+  ctx.fillStyle='#a09080';ctx.font="bold 28px 'DM Mono'";ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('—',el.width/2,el.height/2);
+}
+
+/* ══ BUILD PAGE 1 (year-sensitive) ══ */
+let curYear='69';
+
+function buildP1(yr){
+  const d=D[yr];
+  const M=d.months;
+  const expOther=M.map((_,i)=>(d.expAdmin&&d.expAdmin[i]||0)+(d.expIT&&d.expIT[i]||0)+(d.expMaid&&d.expMaid[i]||0)+(d.expMed&&d.expMed[i]||0)+(d.expCard&&d.expCard[i]||0)+(d.expGuard&&d.expGuard[i]||0));
+
+  // update fin bar
+  const fb=d.finBar;
+  document.getElementById('fv1').textContent=fb.v1;document.getElementById('fs1').textContent=fb.s1;
+  document.getElementById('fv2').textContent=fb.v2;document.getElementById('fs2').textContent=fb.s2;
+  document.getElementById('fv3').textContent=fb.v3;document.getElementById('fs3').textContent=fb.s3;
+  document.getElementById('fv4').textContent=fb.v4;document.getElementById('fs4').textContent=fb.s4;
+  document.getElementById('fv5').textContent=fb.v5;document.getElementById('fs5').textContent=fb.s5;
+  document.getElementById('fv2').className='fin-val '+(d.netFund&&Math.min(...d.netFund.filter(v=>v!=null))<0?'c-r':'c-g');
+
+  // fin bar label adjustments
+  if(yr==='69'){document.getElementById('fl1').textContent='เงินบำรุง';document.getElementById('fl3').textContent='ภาระหนี้สิน';}
+  else{document.getElementById('fl1').textContent='เงินบำรุงหักหนี้สิน';document.getElementById('fl3').textContent='ภาระหนี้สิน';}
+
+  // alert
+  const ab=document.getElementById('alertBox');
+  document.getElementById('alertText').textContent=d.alertText;
+  ab.className='alert '+(d.alertHide?'hidden':d.alertClass);
+
+  // badges
+  document.getElementById('badgeInc').textContent='รายได้ '+d.badgeInc;
+  document.getElementById('badgeRW').textContent=d.badgeRW;
+  document.getElementById('badgeAdmit').textContent=d.badgeAdmit;
+  document.getElementById('badgeAlert').textContent=d.badgeAlert;
+  document.getElementById('yrNote').textContent=d.note;
+  document.getElementById('s6note').textContent='หน่วย: บาท ยกเว้นระบุ · '+d.note;
+
+  // 1. เงินบำรุง
+  if(yr==='69'){
+    mk('c_fund_debt','line',M,[ln('เงินบำรุง',d.fund,P.b),ln('ภาระหนี้สิน',d.debt,P.r)]);
+    mk('c_ar','bar',M,[bar('นอกสังกัด',d.ar_out,P.r,'s'),bar('UC',d.ar_uc,P.b,'s'),bar('ประกันสังคม',d.ar_sso,P.p,'s'),bar('ข้าราชการ+อปท',d.ar_gov,P.g,'s'),bar('อื่นๆ',d.ar_other,P.s,'s')]);
+  } else {
+    // ปี 66-68: ไม่มี fund/debt/ar แยก → แสดง netFund เต็มที่ col 1, nodata col 3
+    mk('c_fund_debt','line',M,[{label:'เงินบำรุงหักหนี้สิน',data:d.netFund,borderColor:'rgba(90,155,196,1)',backgroundColor:'rgba(122,179,212,.15)',fill:true,tension:0,pointRadius:4,pointBackgroundColor:d.netFund.map(v=>v&&v<0?'rgba(195,90,90,1)':'rgba(90,155,196,1)'),borderWidth:2,spanGaps:true}],{lg:false});
+    noData('c_ar');
+  }
+  mk('c_net','line',M,[{label:'หลังหักหนี้สิน',data:d.netFund,borderColor:'rgba(195,90,90,1)',backgroundColor:'rgba(217,128,128,.12)',fill:true,tension:0,pointRadius:5,pointBackgroundColor:d.netFund.map(v=>v&&v>=0?'rgba(80,170,120,1)':'rgba(195,90,90,1)'),borderWidth:2,spanGaps:true}],{lg:false});
+
+  const hasAnySomeDonate=d.donate&&d.donate.some(v=>v!=null);
+  if(hasAnySomeDonate)mk('c_donate','line',M,[ln('เงินบริจาค',d.donate,P.g,true)],{lg:false});
+  else noData('c_donate');
+
+  // 2. IPD
+  mk('c_rw','line',M,[ln('Adj.RW',d.adjRW,P.p)],{lg:false,u:'rw'});
+  mk('c_bor','line',M,[ln('BOR%',d.bor,P.b),{label:'เกณฑ์ 35%',data:M.map(()=>35),borderColor:'rgba(212,168,106,.7)',borderDash:[6,4],borderWidth:1.5,pointRadius:0,fill:false,tension:0}],{u:'%'});
+  mk('c_admitmoney','line',M,[ln('ยอดเงิน Admit',d.admitMoney,P.g)],{lg:false});
+  mk('c_admit','line',M,[{label:'Admit',data:d.admitCount,borderColor:'rgba(85,160,160,1)',backgroundColor:'rgba(122,184,184,.15)',fill:false,tension:0,pointRadius:5,pointBackgroundColor:d.admitCount.map(v=>v>=160?'rgba(212,168,106,1)':'rgba(85,160,160,1)'),borderWidth:2,spanGaps:true}],{lg:false,u:'n'});
+
+  // 3. รายได้
+  mk('c_inc_total','line',M,[{label:'รายได้รวม',data:d.incTotal,borderColor:'rgba(80,170,120,1)',backgroundColor:'rgba(122,190,155,.18)',fill:true,tension:0,pointRadius:6,pointBackgroundColor:d.incTotal.map(v=>v&&v>=1100000?'rgba(190,140,70,1)':'rgba(80,170,120,1)'),borderWidth:2.5,spanGaps:true}],{lg:false});
+  mk('c_inc_dept','line',M,[ln('OPD',d.incOPD,P.b),ln('IPD',d.incIPD,P.g),ln('ทันตกรรม',d.incDent,P.a),ln('กายภาพ',d.incPhys,P.p),ln('แผนไทย',d.incThai,P.ro)]);
+  mk('c_inc_type','line',M,[ln('UC',d.incUC,P.b),ln('ข้าราชการ',d.incGov,P.g),ln('อปท',d.incLoc,P.a),ln('ปกส',d.incSSO,P.p),ln('พรบ',d.incPRB,P.ro)]);
+  mk('c_ipd','line',M,[ln('UC',d.ipd_uc,P.b),ln('ข้าราชการ',d.ipd_gov,P.g),ln('อปท',d.ipd_loc,P.a),ln('ปกส',d.ipd_sso,P.p),ln('พรบ',d.ipd_prb,P.ro)]);
+  mk('c_opd','line',M,[ln('UC',d.opd_uc,P.b),ln('ข้าราชการ',d.opd_gov,P.g),ln('อปท',d.opd_loc,P.a),ln('ปกส',d.opd_sso,P.p),ln('พรบ',d.opd_prb,P.ro)]);
+  mk('c_dental','line',M,[ln('ข้าราชการ',d.dent_gov,P.g),ln('อปท',d.dent_loc,P.a),ln('ปกส',d.dent_sso,P.p),ln('สำรองจ่าย/อื่น',d.dent_else,P.ro)]);
+  mk('c_phys','line',M,[ln('ข้าราชการ',d.phys_gov,P.g),ln('อปท',d.phys_loc,P.a)]);
+  mk('c_thai','line',M,[ln('ข้าราชการ',d.thai_gov,P.g),ln('อปท',d.thai_loc,P.a)]);
+
+  // 4. รายจ่าย
+  mk('c_exp_lines','line',M,[
+    ln('พยาบาล (บ่าย–ดึก)',d.expNurse,P.b),
+    ln('เทคนิค (ยา,lab)',d.expTech,P.g),
+    ln('วัสดุวิทย์ (Lab)',d.expLab,P.r),
+    ln('ทันตกรรม',d.expDental,P.a),
+    ln('คนขับรถ',d.expDriver||M.map(()=>null),P.p),
+    ln('แผนไทย+กายภาพ',d.expThai,P.t),
+    ln('อื่นๆ',expOther,P.s),
+  ]);
+
+  // 5. Unit Cost
+  mk('c_ucost_opd','line',M,[ln('Unit Cost OPD',d.unitOPD,P.t,true)],{lg:false});
+  mk('c_ucost_ipd','line',M,[ln('Unit Cost IPD',d.unitIPD,P.p,true)],{lg:false});
+
+  buildTable1(yr);
+}
+
+function buildTable1(yr){
+  const d=D[yr];const M=d.months;
+  const expOther=M.map((_,i)=>(d.expAdmin&&d.expAdmin[i]||0)+(d.expIT&&d.expIT[i]||0)+(d.expMaid&&d.expMaid[i]||0)+(d.expMed&&d.expMed[i]||0)+(d.expCard&&d.expCard[i]||0)+(d.expGuard&&d.expGuard[i]||0));
+  const totalExp=M.map((_,i)=>(d.expNurse&&d.expNurse[i]||0)+(d.expDental&&d.expDental[i]||0)+(d.expDriver&&d.expDriver[i]||0)+(d.expThai&&d.expThai[i]||0)+(d.expTech&&d.expTech[i]||0)+expOther[i]+(d.expLab&&d.expLab[i]||0));
+
+  const rows=[
+    {l:'เงินบำรุงหลังหักหนี้สิน',data:d.netFund,t:'money'},
+    {l:'เงินบริจาค',data:d.donate,t:'money'},
+    {l:'รายได้รวมเรียกเก็บ',data:d.incTotal,t:'money'},
+    {l:'รายได้ OPD',data:d.incOPD,t:'money'},
+    {l:'รายได้ IPD',data:d.incIPD,t:'money'},
+    {l:'รายได้ทันตกรรม',data:d.incDent,t:'money'},
+    {l:'รายได้กายภาพ',data:d.incPhys,t:'money'},
+    {l:'รายได้แผนไทย',data:d.incThai,t:'money'},
+    {l:'ค่าตอบแทน+วัสดุ Lab รวม',data:totalExp,t:'cost'},
+    {l:'วัสดุ Lab',data:d.expLab,t:'cost'},
+    {l:'ค่าตอบแทนพยาบาล',data:d.expNurse,t:'cost'},
+    {l:'Adjust RW',data:d.adjRW,t:'dec2'},
+    {l:'อัตราครองเตียง (%)',data:d.bor,t:'dec2'},
+    {l:'จำนวน Admit (ราย)',data:d.admitCount,t:'int'},
+    {l:'ยอดเงิน Admit (หลังหักค่าแรง)',data:d.admitMoney,t:'money'},
+    {l:'Unit Cost OPD',data:d.unitOPD,t:'dec2'},
+    {l:'Unit Cost IPD',data:d.unitIPD,t:'dec2'},
+  ];
+  let h=`<table class="t"><thead><tr><th>รายการ</th>${M.map(m=>`<th>${m}</th>`).join('')}<th>รวม/เฉลี่ย</th></tr></thead><tbody>`;
+  rows.forEach(({l,data,t})=>{
+    const tot=(t==='dec2')?avg(data):sum(data);
+    const ts=(t==='dec2')?(tot==null?'—':tot.toFixed(2)):(t==='int'?tot.toLocaleString():fmtN(tot));
+    h+=`<tr><td>${l}</td>`;
+    (data||M.map(()=>null)).forEach(v=>{
+      let cls='',val='';
+      if(t==='money'){val=v==null?'—':fmtN(v);cls=v==null?'tm':v<0?'tn':v>0?'tp':'tm';}
+      else if(t==='cost'){val=v==null?'—':fmtN(v);cls=v==null?'tm':'ta';}
+      else if(t==='dec2'){val=v==null?'—':v.toFixed(2);cls='tb';}
+      else{val=v==null?'—':v.toLocaleString();cls='tb';}
+      h+=`<td class="${cls}">${val}</td>`;
+    });
+    h+=`<td class="tb">${ts}</td></tr>`;
+  });
+  h+=`</tbody></table>`;
+  document.getElementById('tblArea').innerHTML=h;
+}
+
+/* ══ YEAR SWITCHER ══ */
+function setYear(yr){
+  ['66','67','68','69'].forEach(y=>document.getElementById('yrBtn'+y).classList.remove('active'));
+  document.getElementById('yrBtn'+yr).classList.add('active');
+  curYear=yr;
+  buildP1(yr);
+}
+
+/* ══ PAGE 2 DATA (unchanged) ══ */
+const YR3=['ปี 66','ปี 67','ปี 68'];
+const YR3GOV=['ปี 65','ปี 66','ปี 67'];
+const YR8=['ปี 61','ปี 62','ปี 63','ปี 64','ปี 65','ปี 66','ปี 67','ปี 68'];
+const p2_total_inc=[10563499.56,9769601.98,10007562];
+const p2_ip_inc3=[6200542.06,4965227.29,5063710];
+const p2_op_inc3=[2273678,2336593.19,2917020];
+const p2_dent_inc3=[824431.50,1143055.50,876161.50];
+const p2_thai_inc3=[204295.50,312534,263346];
+const p2_phys_inc3=[684278,1012192,887324.50];
+const p2_rw_hist=[897.34,898.60,781.34,768.07,698.24,905.59,807.59,763.55];
+const p2_admit_hist=[136,142,126,115,97,144,125,130];
+const p2_bor_hist=[43.71,38.87,34.89,43.60,41.28,39.86,31.61,29.66];
+const p2_gov_visits=[6198,4606,5384];
+const p2_gov_rev_v=[560,660,909];
+const p2_dent_visits=[305,335,475];
+const p2_dent_rev=[1294,1378,2406];
+const p2_thai_visits=[226,422,741];
+const p2_thai_rev=[470,534,422];
+const p2_phys_visits=[231,463,572];
+const p2_phys_rev=[1263,1482,1770];
+const PP_LBL=['ฝากครรภ์ ANC','ตรวจหลังคลอด PNC','คุมกำเนิด FP','คัดกรองมะเร็งปากมดลูก','คัดกรองวัณโรค','วัคซีนไข้หวัดใหญ่'];
+const p2_pp=[[89435,6353,16744,550,332829,3902],[188651,9533,17947,100,430593,62062],[428247,17354,57158,1660,403722,66239]];
+const p2_growth_lbl=['ทันตกรรม','แผนไทย','กายภาพ','OPD','IPD','รวม'];
+const p2_growth_val=[-23.35,-15.74,-12.34,24.84,1.98,2.44];
+
+function buildP2(){
+  mk('p2_total','line',YR3,[ln('รายได้รวม',p2_total_inc,P.g,true)],{lg:false});
+  if(CH['p2_growth'])CH['p2_growth'].destroy();
+  const elg=document.getElementById('p2_growth');
+  if(elg)CH['p2_growth']=new Chart(elg,{type:'bar',data:{labels:p2_growth_lbl,datasets:[{label:'% โต ปี 67→68',data:p2_growth_val,backgroundColor:p2_growth_val.map(v=>v>=0?'rgba(122,190,155,.85)':'rgba(217,128,128,.85)'),borderColor:p2_growth_val.map(v=>v>=0?'rgba(80,170,120,1)':'rgba(195,90,90,1)'),borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#fdfaf7',borderColor:'#ddd5ca',borderWidth:1,titleColor:'#3a2e24',bodyColor:'#7a6858',padding:9,callbacks:{label:ctx=>` ${ctx.raw>0?'+':''}${ctx.raw}%`}}},scales:{x:{grid:{color:'rgba(200,185,170,.18)'},ticks:{color:'#a09080',font:{family:'Sarabun',size:11}}},y:{grid:{color:'rgba(200,185,170,.18)'},ticks:{color:'#a09080',font:{family:'DM Mono',size:10},callback:v=>v+'%'}}}}});
+  mk('p2_ip_inc','line',YR3,[ln('รายได้ IPD',p2_ip_inc3,P.g,true)],{lg:false});
+  mk('p2_rw_hist','line',YR8,[ln('Sum Adj.RW',p2_rw_hist,P.p)],{lg:false,u:'rw'});
+  mk('p2_admit_hist','line',YR8,[ln('Admit เฉลี่ย/เดือน',p2_admit_hist,P.t)],{lg:false,u:'n'});
+  mk('p2_bor_hist','line',YR8,[ln('BOR%',p2_bor_hist,P.b),{label:'เกณฑ์ 35%',data:YR8.map(()=>35),borderColor:'rgba(212,168,106,.7)',borderDash:[6,4],borderWidth:1.5,pointRadius:0,fill:false,tension:0}],{u:'%'});
+  mk('p2_op_inc','line',YR3,[ln('รายได้ OPD',p2_op_inc3,P.b,true)],{lg:false});
+  mk('p2_gov_visits','line',YR3GOV,[ln('Visit รวม',p2_gov_visits,P.g)],{lg:false,u:'v'});
+  mk('p2_gov_rev_visit','line',YR3GOV,[ln('รายได้เฉลี่ย/Visit',p2_gov_rev_v,P.a)],{lg:false,u:'bv'});
+  mk('p2_dent_inc','line',YR3,[ln('รายได้ทันตกรรม',p2_dent_inc3,P.a,true)],{lg:false});
+  mk('p2_dent_visits','line',YR3GOV,[ln('Visit ทันตกรรม',p2_dent_visits,P.a)],{lg:false,u:'v'});
+  mk('p2_dent_rev','line',YR3GOV,[ln('รายได้เฉลี่ย/Visit',p2_dent_rev,P.ro)],{lg:false,u:'bv'});
+  mk('p2_thai_inc','line',YR3,[ln('รายได้แผนไทย',p2_thai_inc3,P.t,true)],{lg:false});
+  mk('p2_thai_visits','line',YR3GOV,[ln('Visit แผนไทย',p2_thai_visits,P.t)],{lg:false,u:'v'});
+  mk('p2_thai_rev','line',YR3GOV,[ln('รายได้เฉลี่ย/Visit',p2_thai_rev,P.s)],{lg:false,u:'bv'});
+  mk('p2_phys_inc','line',YR3,[ln('รายได้กายภาพ',p2_phys_inc3,P.p,true)],{lg:false});
+  mk('p2_phys_visits','line',YR3GOV,[ln('Visit กายภาพ',p2_phys_visits,P.p)],{lg:false,u:'v'});
+  mk('p2_phys_rev','line',YR3GOV,[ln('รายได้เฉลี่ย/Visit',p2_phys_rev,P.ro)],{lg:false,u:'bv'});
+  mk('p2_pp_line','line',PP_LBL,[ln('ปี 66',p2_pp[0],P.b),ln('ปี 67',p2_pp[1],P.g),ln('ปี 68',p2_pp[2],P.a)]);
+
+  const k=[
+    {l:'รายได้รวม ปี 68',v:'10.01M',cls:'c-g',s:'sg',sub:'บาท'},
+    {l:'โต ปี 67→68',v:'+2.44%',cls:'c-g',s:'sg',sub:'รวมทุกหน่วย'},
+    {l:'รายได้ IPD ปี 68',v:'5.06M',cls:'c-p',s:'sp',sub:'+1.98%'},
+    {l:'รายได้ OPD ปี 68',v:'2.92M',cls:'c-b',s:'sb',sub:'+24.84%'},
+    {l:'ทันตกรรม ปี 68',v:'876K',cls:'c-r',s:'sr',sub:'-23.35%'},
+    {l:'กายภาพ ปี 68',v:'887K',cls:'c-r',s:'sr',sub:'-12.34%'},
+    {l:'Adj.RW ปี 68',v:'763.55',cls:'c-t',s:'st',sub:'-5.45%'},
+    {l:'Admit เฉลี่ย/เดือน ปี 68',v:'130',cls:'c-p',s:'sp',sub:'ราย/เดือน'},
+  ];
+  document.getElementById('kpiRow2').innerHTML=k.map(i=>`<div class="fin-item" style="min-width:110px;"><div class="fin-lbl">${i.l}</div><div class="fin-val ${i.cls}">${i.v}</div><div class="fin-sub">${i.sub}</div><div class="fin-strip ${i.s}"></div></div>`).join('');
+
+  const rows2=[
+    {l:'รายได้รวม',cols:[fmtN(10563499.56,0),fmtN(9769601.98,0),fmtN(10007562,0)],note:'+2.44%',pos:true},
+    {l:'รายได้ IPD',cols:[fmtN(6200542.06,0),fmtN(4965227.29,0),fmtN(5063710,0)],note:'+1.98%',pos:true},
+    {l:'รายได้ OPD',cols:[fmtN(2273678,0),fmtN(2336593.19,0),fmtN(2917020,0)],note:'+24.84%',pos:true},
+    {l:'รายได้ทันตกรรม',cols:[fmtN(824431.50,0),fmtN(1143055.50,0),fmtN(876161.50,0)],note:'-23.35%',pos:false},
+    {l:'รายได้กายภาพ',cols:[fmtN(684278,0),fmtN(1012192,0),fmtN(887324.50,0)],note:'-12.34%',pos:false},
+    {l:'รายได้แผนไทย',cols:[fmtN(204295.50,0),fmtN(312534,0),fmtN(263346,0)],note:'-15.74%',pos:false},
+    {l:'BOR (%)',cols:['39.86','31.61','29.66'],note:'-6.17%',pos:false},
+    {l:'ยอด Admit รวม (ราย)',cols:['1,731','1,495','1,562'],note:'+4.48%',pos:true},
+    {l:'Sum Adj.RW',cols:['905.59','807.59','763.55'],note:'-5.45%',pos:false},
+    {l:'Visit ข้าราชการ/อปท รวม (ปี 65/66/67)',cols:['6,198','4,606','5,384'],note:'↑',pos:true},
+    {l:'รายได้เฉลี่ย/Visit ข้าราชการ/อปท',cols:['560','660','909'],note:'↑',pos:true},
+    {l:'Visit ทันตกรรม',cols:['305','335','475'],note:'↑',pos:true},
+    {l:'รายได้/Visit ทันตกรรม',cols:['1,294','1,378','2,406'],note:'↑',pos:true},
+    {l:'Visit แผนไทย',cols:['226','422','741'],note:'↑',pos:true},
+    {l:'รายได้/Visit แผนไทย',cols:['470','534','422'],note:'↓',pos:false},
+    {l:'Visit กายภาพ',cols:['231','463','572'],note:'↑',pos:true},
+    {l:'รายได้/Visit กายภาพ',cols:['1,263','1,482','1,770'],note:'↑',pos:true},
+    {l:'ฝากครรภ์ ANC',cols:[fmtN(89435,0),fmtN(188651,0),fmtN(428247,0)],note:'↑',pos:true},
+    {l:'คัดกรองวัณโรค',cols:[fmtN(332829,0),fmtN(430593,0),fmtN(403722,0)],note:'',pos:false},
+    {l:'วัคซีนไข้หวัดใหญ่',cols:[fmtN(3902,0),fmtN(62062,0),fmtN(66239,0)],note:'↑',pos:true},
+  ];
+  let h2=`<table class="t"><thead><tr><th>รายการ</th><th>ปี 66</th><th>ปี 67</th><th>ปี 68</th><th>แนวโน้ม</th></tr></thead><tbody>`;
+  rows2.forEach(({l,cols,note,pos})=>{h2+=`<tr><td>${l}</td>`;cols.forEach((v,i)=>{h2+=`<td class="${i===2?(pos?'tp':'tn'):'tb'}">${v}</td>`;});h2+=`<td class="${pos?'tp':'tn'}">${note}</td></tr>`;});
+  h2+=`</tbody></table>`;
+  document.getElementById('tblArea2').innerHTML=h2;
+}
+
+/* ══ PAGE SWITCH ══ */
+function switchPage(n){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page'+n).classList.add('active');
+  document.getElementById('tab'+n+'btn').classList.add('active');
+  const yearBar=document.getElementById('yearBarContainer');
+  yearBar.style.display=n===1?'':'none';
+  if(n===2&&!CH['p2_total']){buildP2();}
+}
+
+/* ══ INIT ══ */
+buildP1('69');
+</script>
+</body>
+</html>
