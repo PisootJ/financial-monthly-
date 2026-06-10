@@ -742,10 +742,10 @@ function buildP1(yr){
   // ลูกหนี้ — pie เฉพาะปี 69 (มีข้อมูล), ปีอื่น noData
   if(yr==='69'){
     // หาเดือนล่าสุดที่มีข้อมูล (ก.พ. = index 4)
-    const arIdx=4;
+    const arIdx=d.ar_out.length-1;
     const arLabels=['นอกสังกัด (รพ.สต.)','UC','ประกันสังคม','ข้าราชการ+อปท','อื่นๆ'];
     const arVals=[d.ar_out[arIdx],d.ar_uc[arIdx],d.ar_sso[arIdx],d.ar_gov[arIdx],d.ar_other[arIdx]];
-    const arMonth='ก.พ.';
+    const arMonth=d.months[arIdx];
     document.getElementById('ct_ar_pie').textContent=`ลูกหนี้ค่ารักษาพยาบาลสะสม (${arMonth})`;
     document.getElementById('cs_ar_pie').textContent=`รวม ${arVals.reduce((s,v)=>s+v,0).toLocaleString('th-TH',{maximumFractionDigits:0})} บาท`;
     if(CH['c_ar_pie'])CH['c_ar_pie'].destroy();
