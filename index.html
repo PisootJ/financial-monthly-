@@ -56,6 +56,17 @@ body{background:var(--bg);color:var(--text);font-family:'Sarabun',sans-serif;fon
 .yr-btn.active{background:var(--blue);color:#fff;border-color:var(--blue);}
 .yr-note{font-size:10px;color:var(--muted);margin-left:auto;}
 
+/* IPD COMPARE CHIPS */
+.ipd-cmp{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:2px 14px 10px;}
+.ipd-cmp-label{font-size:10.5px;font-weight:700;color:var(--muted);margin-right:2px;}
+.ipd-cmp-btn{padding:4px 12px;border-radius:14px;border:1px solid var(--border);background:var(--card);color:var(--text2);font-family:'Sarabun',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;}
+.ipd-cmp-btn:hover{border-color:var(--purple);color:var(--purple);}
+.ipd-cmp-btn.on{color:#fff;border-color:transparent;}
+.ipd-cmp-btn.on[data-yr="66"]{background:rgba(200,175,140,.9);}
+.ipd-cmp-btn.on[data-yr="67"]{background:rgba(90,155,196,.9);}
+.ipd-cmp-btn.on[data-yr="68"]{background:rgba(190,140,70,.9);}
+.ipd-cmp-btn.on[data-yr="69"]{background:rgba(130,105,160,.9);}
+
 /* TABS */
 .tab-nav{position:sticky;top:132px;z-index:110;background:var(--bg2);border-bottom:1px solid var(--border);padding:0 28px;display:flex;gap:0;}
 .tab-btn{padding:8px 20px;border:none;background:transparent;color:var(--muted);font-family:'Sarabun',sans-serif;font-size:12px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;margin-bottom:-1px;letter-spacing:.2px;}
@@ -216,6 +227,13 @@ table.t tr:hover td{background:rgba(200,190,180,.06);}
 <!-- 2. IPD -->
 <hr class="divider">
 <div class="sbar p"><span class="stitle">2 · ตัวชี้วัด IPD รายเดือน</span><span class="snote">Adj.RW · อัตราครองเตียง · ยอดเงิน Admit · จำนวน Admit</span></div>
+<div class="ipd-cmp" id="ipdCmpBar">
+  <span class="ipd-cmp-label">เปรียบเทียบปี:</span>
+  <button class="ipd-cmp-btn" data-yr="66" onclick="toggleIpdYr('66')">2566</button>
+  <button class="ipd-cmp-btn" data-yr="67" onclick="toggleIpdYr('67')">2567</button>
+  <button class="ipd-cmp-btn" data-yr="68" onclick="toggleIpdYr('68')">2568</button>
+  <button class="ipd-cmp-btn" data-yr="69" onclick="toggleIpdYr('69')">2569</button>
+</div>
 <div class="cg c2">
   <div class="cc"><div class="ct">Adjust RW รายเดือน</div><div class="cs" id="cs_rw">RW</div><div class="cw h200"><canvas id="c_rw"></canvas></div></div>
   <div class="cc"><div class="ct">อัตราครองเตียง (BOR)</div><div class="cs">% · เส้นประ = เกณฑ์ 35%</div><div class="cw h200"><canvas id="c_bor"></canvas></div></div>
@@ -724,10 +742,8 @@ function buildP1(yr){
   else noData('c_donate');
 
   // 2. IPD
-  mk('c_rw','line',M,[ln('Adj.RW',d.adjRW,P.p)],{lg:false,u:'rw'});
-  mk('c_bor','line',M,[ln('BOR%',d.bor,P.b),{label:'เกณฑ์ 35%',data:M.map(()=>35),borderColor:'rgba(212,168,106,.7)',borderDash:[6,4],borderWidth:1.5,pointRadius:0,fill:false,tension:0}],{u:'%'});
-  mk('c_admitmoney','line',M,[ln('ยอดเงิน Admit',d.admitMoney,P.g)],{lg:false});
-  mk('c_admit','line',M,[{label:'Admit',data:d.admitCount,borderColor:'rgba(85,160,160,1)',backgroundColor:'rgba(122,184,184,.15)',fill:false,tension:0,pointRadius:5,pointBackgroundColor:d.admitCount.map(v=>v>=160?'rgba(212,168,106,1)':'rgba(85,160,160,1)'),borderWidth:2,spanGaps:true}],{lg:false,u:'n'});
+  syncIpdCmpBtns();
+  buildIPD();
 
   // 3. รายได้
   mk('c_inc_total','line',M,[{label:'รายได้รวม',data:d.incTotal,borderColor:'rgba(80,170,120,1)',backgroundColor:'rgba(122,190,155,.18)',fill:true,tension:0,pointRadius:6,pointBackgroundColor:d.incTotal.map(v=>v&&v>=1100000?'rgba(190,140,70,1)':'rgba(80,170,120,1)'),borderWidth:2.5,spanGaps:true}],{lg:false});
@@ -840,6 +856,48 @@ function buildTable1(yr){
   });
   h+=`</tbody></table>`;
   document.getElementById('tblArea').innerHTML=h;
+}
+
+/* ══ IPD YEAR COMPARE ══ */
+let ipdCmpYears=['69'];
+const IPD_YR_LABEL={'66':'ปี 2566','67':'ปี 2567','68':'ปี 2568','69':'ปี 2569'};
+const IPD_YR_COLOR={'66':P.s,'67':P.b,'68':P.a,'69':P.p};
+function padTo12(arr){
+  if(!arr)return Array(12).fill(null);
+  return arr.length>=12?arr.slice(0,12):arr.concat(Array(12-arr.length).fill(null));
+}
+function syncIpdCmpBtns(){
+  if(!ipdCmpYears.includes(curYear))ipdCmpYears=[curYear];
+  document.querySelectorAll('.ipd-cmp-btn').forEach(btn=>{
+    btn.classList.toggle('on',ipdCmpYears.includes(btn.dataset.yr));
+  });
+}
+function toggleIpdYr(yr){
+  if(yr===curYear)return; // ปีที่กำลังดูอยู่แสดงเสมอ กดปิดไม่ได้
+  const i=ipdCmpYears.indexOf(yr);
+  if(i>=0)ipdCmpYears.splice(i,1);
+  else ipdCmpYears.push(yr);
+  syncIpdCmpBtns();
+  buildIPD();
+}
+function buildIPD(){
+  const years=['66','67','68','69'].filter(y=>ipdCmpYears.includes(y));
+  if(years.length<=1){
+    const yr=years[0]||curYear;
+    const d=D[yr];const M=d.months;
+    mk('c_rw','line',M,[ln('Adj.RW',d.adjRW,P.p)],{lg:false,u:'rw'});
+    mk('c_bor','line',M,[ln('BOR%',d.bor,P.b),{label:'เกณฑ์ 35%',data:M.map(()=>35),borderColor:'rgba(212,168,106,.7)',borderDash:[6,4],borderWidth:1.5,pointRadius:0,fill:false,tension:0}],{u:'%'});
+    mk('c_admitmoney','line',M,[ln('ยอดเงิน Admit',d.admitMoney,P.g)],{lg:false});
+    mk('c_admit','line',M,[{label:'Admit',data:d.admitCount,borderColor:'rgba(85,160,160,1)',backgroundColor:'rgba(122,184,184,.15)',fill:false,tension:0,pointRadius:5,pointBackgroundColor:d.admitCount.map(v=>v>=160?'rgba(212,168,106,1)':'rgba(85,160,160,1)'),borderWidth:2,spanGaps:true}],{lg:false,u:'n'});
+    return;
+  }
+  const M=MONTHS_12;
+  mk('c_rw','line',M,years.map(y=>ln(IPD_YR_LABEL[y],padTo12(D[y].adjRW),IPD_YR_COLOR[y])),{lg:true,u:'rw'});
+  const borDs=years.map(y=>ln(IPD_YR_LABEL[y],padTo12(D[y].bor),IPD_YR_COLOR[y]));
+  borDs.push({label:'เกณฑ์ 35%',data:M.map(()=>35),borderColor:'rgba(212,168,106,.7)',borderDash:[6,4],borderWidth:1.5,pointRadius:0,fill:false,tension:0});
+  mk('c_bor','line',M,borDs,{lg:true,u:'%'});
+  mk('c_admitmoney','line',M,years.map(y=>ln(IPD_YR_LABEL[y],padTo12(D[y].admitMoney),IPD_YR_COLOR[y])),{lg:true});
+  mk('c_admit','line',M,years.map(y=>ln(IPD_YR_LABEL[y],padTo12(D[y].admitCount),IPD_YR_COLOR[y])),{lg:true,u:'n'});
 }
 
 /* ══ YEAR SWITCHER ══ */
