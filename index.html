@@ -877,14 +877,17 @@ function buildTable1(yr){
 let ipdCmpYears=['69'];
 const IPD_YR_LABEL={'66':'ปี 2566','67':'ปี 2567','68':'ปี 2568','69':'ปี 2569'};
 const IPD_YR_COLOR={'66':P.t,'67':P.b,'68':P.a,'69':P.p};
+const IPD_YR_BG={'66':'rgba(85,160,160,.9)','67':'rgba(90,155,196,.9)','68':'rgba(190,140,70,.9)','69':'rgba(130,105,160,.9)'};
 function padTo12(arr){
   if(!arr)return Array(12).fill(null);
   return arr.length>=12?arr.slice(0,12):arr.concat(Array(12-arr.length).fill(null));
 }
 function syncIpdCmpBtns(){
   if(!ipdCmpYears.includes(curYear))ipdCmpYears=[curYear];
-  document.querySelectorAll('.ipd-cmp-btn').forEach(btn=>{
-    btn.classList.toggle('on',ipdCmpYears.includes(btn.dataset.yr));
+  document.querySelectorAll('#ipdCmpBar .ipd-cmp-btn').forEach(btn=>{
+    const on=ipdCmpYears.includes(btn.dataset.yr);
+    btn.classList.toggle('on',on);
+    btn.style.background=on?IPD_YR_BG[btn.dataset.yr]:'';
   });
 }
 function toggleIpdYr(yr){
@@ -920,7 +923,9 @@ let incCmpYears=['69'];
 function syncIncCmpBtns(){
   if(!incCmpYears.includes(curYear))incCmpYears=[curYear];
   document.querySelectorAll('#incCmpBar .ipd-cmp-btn').forEach(btn=>{
-    btn.classList.toggle('on',incCmpYears.includes(btn.dataset.yr));
+    const on=incCmpYears.includes(btn.dataset.yr);
+    btn.classList.toggle('on',on);
+    btn.style.background=on?IPD_YR_BG[btn.dataset.yr]:'';
   });
 }
 function toggleIncYr(yr){
