@@ -253,9 +253,20 @@ table.t tr:hover td{background:rgba(200,190,180,.06);}
   <div class="cc"><div class="ct">รายได้ IPD - OPD</div><div class="cs">บาท · ผู้ป่วยใน vs ผู้ป่วยนอก รายเดือน</div><div class="cw h240"><canvas id="c_inc_ipdopd"></canvas></div></div>
   <div class="cc"><div class="ct">รายได้ ทันตกรรม · กายภาพ · แผนไทย</div><div class="cs">บาท · เปรียบเทียบ 3 หน่วยงาน รายเดือน</div><div class="cw h240"><canvas id="c_inc_3dept"></canvas></div></div>
 </div>
-<div class="cg c2" style="margin-top:11px;">
+<div class="ipd-cmp" id="incCmpBar">
+  <span class="ipd-cmp-label">เปรียบเทียบปี:</span>
+  <button class="ipd-cmp-btn" data-yr="66" onclick="toggleIncYr('66')">2566</button>
+  <button class="ipd-cmp-btn" data-yr="67" onclick="toggleIncYr('67')">2567</button>
+  <button class="ipd-cmp-btn" data-yr="68" onclick="toggleIncYr('68')">2568</button>
+  <button class="ipd-cmp-btn" data-yr="69" onclick="toggleIncYr('69')">2569</button>
+</div>
+<div class="cg c3">
+  <div class="cc"><div class="ct">รายได้ทันตกรรม</div><div class="cs">บาท รายเดือน</div><div class="cw h200"><canvas id="c_inc_dent"></canvas></div></div>
+  <div class="cc"><div class="ct">รายได้กายภาพ</div><div class="cs">บาท รายเดือน</div><div class="cw h200"><canvas id="c_inc_phys"></canvas></div></div>
+  <div class="cc"><div class="ct">รายได้แผนไทย</div><div class="cs">บาท รายเดือน</div><div class="cw h200"><canvas id="c_inc_thai"></canvas></div></div>
+</div>
+<div class="cg c1" style="margin-top:11px;">
   <div class="cc"><div class="ct">รายได้รวมแยกตามสิทธิ์</div><div class="cs">บาท · UC / ข้าราชการ / อปท / ปกส / พรบ</div><div class="cw h240"><canvas id="c_inc_type"></canvas></div></div>
-  <div class="cc"><div class="ct">รายได้ ทันตกรรม · กายภาพ · แผนไทย</div><div class="cs">บาท · เปรียบเทียบ 3 หน่วยงาน รายเดือน</div><div class="cw h240"><canvas id="c_inc_3dept"></canvas></div></div>
 </div>
 
 <!-- 4. รายจ่าย -->
@@ -754,6 +765,10 @@ function buildP1(yr){
   // ทันตกรรม กายภาพ แผนไทย
   mk('c_inc_3dept','line',M,[ln('ทันตกรรม',d.incDent,P.a),ln('กายภาพ',d.incPhys,P.p),ln('แผนไทย',d.incThai,P.ro)]);
 
+  // ทันตกรรม / กายภาพ / แผนไทย แยกกราฟ พร้อมเปรียบเทียบปี
+  syncIncCmpBtns();
+  buildIncDept();
+
   // รายได้แยกสิทธิ์รวม
   mk('c_inc_type','line',M,[ln('UC',d.incUC,P.b),ln('ข้าราชการ',d.incGov,P.g),ln('อปท',d.incLoc,P.a),ln('ปกส',d.incSSO,P.p),ln('พรบ',d.incPRB,P.ro)]);
 
@@ -861,7 +876,7 @@ function buildTable1(yr){
 /* ══ IPD YEAR COMPARE ══ */
 let ipdCmpYears=['69'];
 const IPD_YR_LABEL={'66':'ปี 2566','67':'ปี 2567','68':'ปี 2568','69':'ปี 2569'};
-const IPD_YR_COLOR={'66':P.s,'67':P.b,'68':P.a,'69':P.p};
+const IPD_YR_COLOR={'66':P.t,'67':P.b,'68':P.a,'69':P.p};
 function padTo12(arr){
   if(!arr)return Array(12).fill(null);
   return arr.length>=12?arr.slice(0,12):arr.concat(Array(12-arr.length).fill(null));
@@ -898,6 +913,38 @@ function buildIPD(){
   mk('c_bor','line',M,borDs,{lg:true,u:'%'});
   mk('c_admitmoney','line',M,years.map(y=>ln(IPD_YR_LABEL[y],padTo12(D[y].admitMoney),IPD_YR_COLOR[y])),{lg:true});
   mk('c_admit','line',M,years.map(y=>ln(IPD_YR_LABEL[y],padTo12(D[y].admitCount),IPD_YR_COLOR[y])),{lg:true,u:'n'});
+}
+
+/* ══ รายได้ ทันตกรรม/กายภาพ/แผนไทย YEAR COMPARE ══ */
+let incCmpYears=['69'];
+function syncIncCmpBtns(){
+  if(!incCmpYears.includes(curYear))incCmpYears=[curYear];
+  document.querySelectorAll('#incCmpBar .ipd-cmp-btn').forEach(btn=>{
+    btn.classList.toggle('on',incCmpYears.includes(btn.dataset.yr));
+  });
+}
+function toggleIncYr(yr){
+  if(yr===curYear)return;
+  const i=incCmpYears.indexOf(yr);
+  if(i>=0)incCmpYears.splice(i,1);
+  else incCmpYears.push(yr);
+  syncIncCmpBtns();
+  buildIncDept();
+}
+function buildIncDept(){
+  const years=['66','67','68','69'].filter(y=>incCmpYears.includes(y));
+  if(years.length<=1){
+    const yr=years[0]||curYear;
+    const d=D[yr];const M=d.months;
+    mk('c_inc_dent','line',M,[ln('ทันตกรรม',d.incDent,P.a,true)],{lg:false});
+    mk('c_inc_phys','line',M,[ln('กายภาพ',d.incPhys,P.p,true)],{lg:false});
+    mk('c_inc_thai','line',M,[ln('แผนไทย',d.incThai,P.ro,true)],{lg:false});
+    return;
+  }
+  const M=MONTHS_12;
+  mk('c_inc_dent','line',M,years.map(y=>ln(IPD_YR_LABEL[y],padTo12(D[y].incDent),IPD_YR_COLOR[y])),{lg:true});
+  mk('c_inc_phys','line',M,years.map(y=>ln(IPD_YR_LABEL[y],padTo12(D[y].incPhys),IPD_YR_COLOR[y])),{lg:true});
+  mk('c_inc_thai','line',M,years.map(y=>ln(IPD_YR_LABEL[y],padTo12(D[y].incThai),IPD_YR_COLOR[y])),{lg:true});
 }
 
 /* ══ YEAR SWITCHER ══ */
