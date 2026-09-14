@@ -49,7 +49,7 @@ body{background:var(--bg);color:var(--text);font-family:'Sarabun',sans-serif;fon
 .c-t{color:var(--teal);}.st{background:var(--teal);}
 
 /* YEAR SELECTOR */
-.year-bar{position:sticky;top:177px;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);padding:8px 28px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.year-bar{position:sticky;top:132px;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);padding:8px 28px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .year-label{font-size:11px;font-weight:700;color:var(--muted);margin-right:4px;}
 .yr-btn{padding:5px 16px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);font-family:'Sarabun',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .18s;}
 .yr-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-bg);}
@@ -67,12 +67,14 @@ body{background:var(--bg);color:var(--text);font-family:'Sarabun',sans-serif;fon
 .ipd-cmp-btn.on[data-yr="68"]{background:rgba(190,140,70,.9);}
 .ipd-cmp-btn.on[data-yr="69"]{background:rgba(130,105,160,.9);}
 
-/* TABS */
-.tab-nav{position:sticky;top:132px;z-index:110;background:var(--bg2);border-bottom:1px solid var(--border);padding:0 28px;display:flex;gap:0;}
-.tab-btn{padding:8px 20px;border:none;background:transparent;color:var(--muted);font-family:'Sarabun',sans-serif;font-size:12px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;margin-bottom:-1px;letter-spacing:.2px;}
-.tab-btn:hover{color:var(--text2);}
-.tab-btn.active{color:var(--text);border-bottom-color:var(--blue);}
-.tab-btn.p2.active{border-bottom-color:var(--purple);}
+/* SIDEBAR NAV */
+body{margin-left:184px;}
+.sidebar{position:fixed;left:0;top:0;width:184px;height:100vh;background:var(--bg2);border-right:1px solid var(--border);padding:18px 0;z-index:200;display:flex;flex-direction:column;gap:3px;overflow-y:auto;}
+.sb-title{font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:0 20px 12px;}
+.side-btn{display:block;width:100%;padding:12px 20px;border:none;border-left:3px solid transparent;background:transparent;color:var(--text2);font-family:'Sarabun',sans-serif;font-size:12.5px;font-weight:700;cursor:pointer;text-align:left;transition:all .18s;line-height:1.4;}
+.side-btn:hover{background:rgba(122,179,212,.10);color:var(--text);}
+.side-btn.active{background:var(--blue-bg);color:var(--blue);border-left-color:var(--blue);}
+.side-btn.p2.active{background:var(--purple-bg);color:var(--purple);border-left-color:var(--purple);}
 .page{display:none;}
 .page.active{display:block;}
 
@@ -134,8 +136,11 @@ table.t tr:hover td{background:rgba(200,190,180,.06);}
   .c2,.c3{grid-template-columns:1fr;}
   .main{padding:10px 10px 40px;}
   .fin-bar{top:58px;padding:6px 10px;}
-  .tab-nav{top:118px;}
-  .year-bar{top:158px;padding:6px 10px;}
+  .year-bar{top:118px;padding:6px 10px;}
+  .sidebar{width:64px;}
+  .sidebar .sb-title{display:none;}
+  .side-btn{padding:12px 6px;font-size:10px;text-align:center;}
+  body{margin-left:64px;}
 }
 </style>
 </head>
@@ -191,10 +196,11 @@ table.t tr:hover td{background:rgba(200,190,180,.06);}
   </div>
 </div>
 
-<!-- TABS -->
-<div class="tab-nav">
-  <button class="tab-btn active" id="tab1btn" onclick="switchPage(1)">📊 หน้า 1 · Financial Review</button>
-  <button class="tab-btn p2" id="tab2btn" onclick="switchPage(2)">📈 หน้า 2 · Productivity แยกหน่วยงาน</button>
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sb-title">เมนู</div>
+  <button class="side-btn active" id="tab1btn" onclick="switchPage(1)">📊 Financial Review</button>
+  <button class="side-btn p2" id="tab2btn" onclick="switchPage(2)">📈 Productivity แยกหน่วยงาน</button>
 </div>
 
 <!-- YEAR SELECTOR -->
@@ -380,11 +386,6 @@ table.t tr:hover td{background:rgba(200,190,180,.06);}
 <div class="cg c1">
   <div class="cc"><div class="ct">รายได้ PP Fee Schedule แยกบริการ</div><div class="cs">บาท · กราฟเส้นตรง</div><div class="cw h260"><canvas id="p2_pp_line"></canvas></div></div>
 </div>
-
-<!-- P2.8 ตาราง -->
-<hr class="divider">
-<div class="sbar r"><span class="stitle">8 · ตารางสรุป Productivity แยกหน่วยงาน</span><span class="snote">ปี 66 / 67 / 68</span></div>
-<div class="cc"><div class="tbl-wrap" id="tblArea2"></div></div>
 
 </div></div><!-- /main /page2 -->
 
@@ -1071,45 +1072,17 @@ function buildKPI2(){
   document.getElementById('kpiRow2').innerHTML=k.map(i=>`<div class="fin-item" style="min-width:110px;"><div class="fin-lbl">${i.l}</div><div class="fin-val ${i.cls}">${i.v}</div><div class="fin-sub">${i.sub}</div><div class="fin-strip ${i.s}"></div></div>`).join('');
 }
 
-function buildTable2(){
-  const rows2=[
-    {l:'รายได้รวม',cols:[fmtN(10563499.56,0),fmtN(9769601.98,0),fmtN(10007562,0)],note:'+2.44%',pos:true},
-    {l:'รายได้ IPD',cols:[fmtN(6200542.06,0),fmtN(4965227.29,0),fmtN(5063710,0)],note:'+1.98%',pos:true},
-    {l:'รายได้ OPD',cols:[fmtN(2273678,0),fmtN(2336593.19,0),fmtN(2917020,0)],note:'+24.84%',pos:true},
-    {l:'รายได้ทันตกรรม',cols:[fmtN(824431.50,0),fmtN(1143055.50,0),fmtN(876161.50,0)],note:'-23.35%',pos:false},
-    {l:'รายได้กายภาพ',cols:[fmtN(684278,0),fmtN(1012192,0),fmtN(887324.50,0)],note:'-12.34%',pos:false},
-    {l:'รายได้แผนไทย',cols:[fmtN(204295.50,0),fmtN(312534,0),fmtN(263346,0)],note:'-15.74%',pos:false},
-    {l:'BOR (%)',cols:['39.86','31.61','29.66'],note:'-6.17%',pos:false},
-    {l:'ยอด Admit รวม (ราย)',cols:['1,731','1,495','1,562'],note:'+4.48%',pos:true},
-    {l:'Sum Adj.RW',cols:['905.59','807.59','763.55'],note:'-5.45%',pos:false},
-    {l:'Visit ข้าราชการ/อปท รวม (ปี 65/66/67)',cols:['6,198','4,606','5,384'],note:'↑',pos:true},
-    {l:'รายได้เฉลี่ย/Visit ข้าราชการ/อปท',cols:['560','660','909'],note:'↑',pos:true},
-    {l:'Visit ทันตกรรม',cols:['305','335','475'],note:'↑',pos:true},
-    {l:'รายได้/Visit ทันตกรรม',cols:['1,294','1,378','2,406'],note:'↑',pos:true},
-    {l:'Visit แผนไทย',cols:['226','422','741'],note:'↑',pos:true},
-    {l:'รายได้/Visit แผนไทย',cols:['470','534','422'],note:'↓',pos:false},
-    {l:'Visit กายภาพ',cols:['231','463','572'],note:'↑',pos:true},
-    {l:'รายได้/Visit กายภาพ',cols:['1,263','1,482','1,770'],note:'↑',pos:true},
-    {l:'ฝากครรภ์ ANC',cols:[fmtN(89435,0),fmtN(188651,0),fmtN(428247,0)],note:'↑',pos:true},
-    {l:'คัดกรองวัณโรค',cols:[fmtN(332829,0),fmtN(430593,0),fmtN(403722,0)],note:'',pos:false},
-    {l:'วัคซีนไข้หวัดใหญ่',cols:[fmtN(3902,0),fmtN(62062,0),fmtN(66239,0)],note:'↑',pos:true},
-  ];
-  let h2=`<table class="t"><thead><tr><th>รายการ</th><th>ปี 66</th><th>ปี 67</th><th>ปี 68</th><th>แนวโน้ม</th></tr></thead><tbody>`;
-  rows2.forEach(({l,cols,note,pos})=>{h2+=`<tr><td>${l}</td>`;cols.forEach((v,i)=>{h2+=`<td class="${i===2?(pos?'tp':'tn'):'tb'}">${v}</td>`;});h2+=`<td class="${pos?'tp':'tn'}">${note}</td></tr>`;});
-  h2+=`</tbody></table>`;
-  document.getElementById('tblArea2').innerHTML=h2;
-}
 
 /* ══ PAGE SWITCH ══ */
 function switchPage(n){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.side-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('page'+n).classList.add('active');
   document.getElementById('tab'+n+'btn').classList.add('active');
   const yearBar=document.getElementById('yearBarContainer');
   yearBar.style.display=n===1?'':'none';
   if(n===2){
-    if(!CH['p2_total']){buildKPI2();buildP2();buildTable2();}
+    if(!CH['p2_total']){buildKPI2();buildP2();}
     else{
       // refresh year-sensitive charts
       const M=D[curYear].months;
