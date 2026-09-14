@@ -6,6 +6,7 @@
 <title>Financial Review Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
 <style>
 :root{
   --bg:#f4f0ec;--bg2:#ece8e2;--card:#fdfaf7;--border:#ddd5ca;--shadow:rgba(150,130,110,.10);
@@ -666,6 +667,8 @@ const P={
 
 /* ══ CHART ENGINE ══ */
 const CH={};
+if(window.ChartDataLabels){Chart.register(ChartDataLabels);Chart.defaults.set('plugins.datalabels',{display:false});}
+function dlFmt(v,u){if(v==null||v==='')return '';if(u==='%'||u==='rw')return Number(v).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2});if(u==='n'||u==='v'||u==='bv')return Number(v).toLocaleString('th-TH');return fmtS(v);}
 function mk(id,type,labels,datasets,opts={}){
   if(CH[id])CH[id].destroy();
   const el=document.getElementById(id);if(!el)return;
@@ -680,7 +683,8 @@ function mk(id,type,labels,datasets,opts={}){
           if(opts.u==='n')return ` ${Number(v).toLocaleString()} ราย`;
           if(opts.u==='bv')return ` ${Number(v).toLocaleString()} บาท/visit`;
           if(opts.u==='v')return ` ${Number(v).toLocaleString()} ครั้ง`;
-          return ` ${Number(v).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2})} บาท`;}}}
+          return ` ${Number(v).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2})} บาท`;}}},
+      datalabels:opts.dl?{display:true,align:'top',anchor:'end',offset:6,color:'#3a2e24',font:{family:'Sarabun',size:9,weight:700},formatter:v=>dlFmt(v,opts.u)}:{display:false}
     },
     scales:(type==='pie'||type==='doughnut')?{}:{
       x:{grid:{color:'rgba(200,185,170,.18)'},ticks:{color:'#a09080',font:{family:'Sarabun',size:10}}},
@@ -989,7 +993,7 @@ const p2_growth_lbl=['ทันตกรรม','แผนไทย','กาย�
 const p2_growth_val=[-23.35,-15.74,-12.34,24.84,1.98,2.44];
 
 function buildP2(){
-  mk('p2_total','line',YR3,[ln('รายได้รวม',p2_total_inc,P.g,true)],{lg:false});
+  mk('p2_total','line',YR3,[ln('รายได้รวม',p2_total_inc,P.g,true)],{lg:false,dl:true});
   if(CH['p2_growth'])CH['p2_growth'].destroy();
   const elg=document.getElementById('p2_growth');
   if(elg)CH['p2_growth']=new Chart(elg,{type:'bar',data:{labels:p2_growth_lbl,datasets:[{label:'% โต ปี 67→68',data:p2_growth_val,backgroundColor:p2_growth_val.map(v=>v>=0?'rgba(122,190,155,.85)':'rgba(217,128,128,.85)'),borderColor:p2_growth_val.map(v=>v>=0?'rgba(80,170,120,1)':'rgba(195,90,90,1)'),borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#fdfaf7',borderColor:'#ddd5ca',borderWidth:1,titleColor:'#3a2e24',bodyColor:'#7a6858',padding:9,callbacks:{label:ctx=>` ${ctx.raw>0?'+':''}${ctx.raw}%`}}},scales:{x:{grid:{color:'rgba(200,185,170,.18)'},ticks:{color:'#a09080',font:{family:'Sarabun',size:11}}},y:{grid:{color:'rgba(200,185,170,.18)'},ticks:{color:'#a09080',font:{family:'DM Mono',size:10},callback:v=>v+'%'}}}}});
@@ -999,25 +1003,26 @@ function buildP2(){
 
   // ── IPD ──
   // 1: ย้อนหลัง 3 ปี
-  mk('p2_ip_inc','line',YR3,[ln('รายได้ IPD',p2_ip_inc3,P.g,true)],{lg:false});
+  mk('p2_ip_inc','line',YR3,[ln('รายได้ IPD',p2_ip_inc3,P.g,true)],{lg:false,dl:true});
   // 2: รายเดือนปีล่าสุด (incIPD)
   mk('p2_ip_monthly','line',getM(),[ln('รายได้ IPD',D[curYear].incIPD,P.g,true)],{lg:false});
   // 3: แยกสิทธิ์
   mk('p2_ipd_rights','line',getM(),[ln('UC',D[curYear].ipd_uc,P.b),ln('ข้าราชการ',D[curYear].ipd_gov,P.g),ln('อปท',D[curYear].ipd_loc,P.a),ln('ปกส',D[curYear].ipd_sso,P.p),ln('พรบ',D[curYear].ipd_prb,P.ro)]);
   // 4: Adj.RW ย้อนหลัง
-  mk('p2_rw_hist','line',YR8,[ln('Sum Adj.RW',p2_rw_hist,P.p)],{lg:false,u:'rw'});
+  mk('p2_rw_hist','line',YR8,[ln('Sum Adj.RW',p2_rw_hist,P.p)],{lg:false,u:'rw',dl:true});
   // 5: Admit + BOR dual-axis
   if(CH['p2_admit_bor_hist'])CH['p2_admit_bor_hist'].destroy();
   const elab=document.getElementById('p2_admit_bor_hist');
   if(elab)CH['p2_admit_bor_hist']=new Chart(elab,{type:'line',
     data:{labels:YR8,datasets:[
-      {label:'Admit เฉลี่ย/เดือน (ราย)',data:p2_admit_hist,borderColor:'rgba(85,160,160,1)',backgroundColor:'rgba(122,184,184,.12)',fill:true,tension:0,pointRadius:4,yAxisID:'y',borderWidth:2},
-      {label:'BOR (%)',data:p2_bor_hist,borderColor:'rgba(90,155,196,1)',backgroundColor:'transparent',fill:false,tension:0,pointRadius:4,yAxisID:'y2',borderWidth:2},
-      {label:'เกณฑ์ BOR 35%',data:YR8.map(()=>35),borderColor:'rgba(212,168,106,.7)',borderDash:[6,4],borderWidth:1.5,pointRadius:0,fill:false,tension:0,yAxisID:'y2'},
+      {label:'Admit เฉลี่ย/เดือน (ราย)',data:p2_admit_hist,borderColor:'rgba(85,160,160,1)',backgroundColor:'rgba(122,184,184,.12)',fill:true,tension:0,pointRadius:4,yAxisID:'y',borderWidth:2,datalabels:{color:'rgba(60,120,120,1)'}},
+      {label:'BOR (%)',data:p2_bor_hist,borderColor:'rgba(90,155,196,1)',backgroundColor:'transparent',fill:false,tension:0,pointRadius:4,yAxisID:'y2',borderWidth:2,datalabels:{color:'rgba(60,110,150,1)'}},
+      {label:'เกณฑ์ BOR 35%',data:YR8.map(()=>35),borderColor:'rgba(212,168,106,.7)',borderDash:[6,4],borderWidth:1.5,pointRadius:0,fill:false,tension:0,yAxisID:'y2',datalabels:{display:false}},
     ]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{
       legend:{position:'bottom',labels:{color:'#a09080',font:{family:'Sarabun',size:10},boxWidth:10,padding:7}},
-      tooltip:{backgroundColor:'#fdfaf7',borderColor:'#ddd5ca',borderWidth:1,titleColor:'#3a2e24',bodyColor:'#7a6858',padding:8}
+      tooltip:{backgroundColor:'#fdfaf7',borderColor:'#ddd5ca',borderWidth:1,titleColor:'#3a2e24',bodyColor:'#7a6858',padding:8},
+      datalabels:{display:true,align:'top',anchor:'end',offset:6,font:{family:'Sarabun',size:9,weight:700},formatter:(v,ctx)=>v==null?'':(ctx.dataset.yAxisID==='y2'?Number(v).toFixed(1)+'%':Number(v).toLocaleString('th-TH'))}
     },scales:{
       x:{grid:{color:'rgba(200,185,170,.18)'},ticks:{color:'#a09080',font:{family:'Sarabun',size:10}}},
       y:{grid:{color:'rgba(200,185,170,.18)'},ticks:{color:'rgba(85,160,160,1)',font:{family:'DM Mono',size:10}},title:{display:true,text:'ราย',color:'rgba(85,160,160,.8)',font:{size:10}}},
@@ -1025,36 +1030,36 @@ function buildP2(){
     }}});
 
   // ── OPD ──
-  mk('p2_op_inc','line',YR3,[ln('รายได้ OPD',p2_op_inc3,P.b,true)],{lg:false});
+  mk('p2_op_inc','line',YR3,[ln('รายได้ OPD',p2_op_inc3,P.b,true)],{lg:false,dl:true});
   mk('p2_op_monthly','line',getM(),[ln('รายได้ OPD',D[curYear].incOPD,P.b,true)],{lg:false});
   // c_opd built in buildP1
   mk('p2_opd_rights','line',getM(),[ln('UC',D[curYear].opd_uc,P.b),ln('ข้าราชการ',D[curYear].opd_gov,P.g),ln('อปท',D[curYear].opd_loc,P.a),ln('ปกส',D[curYear].opd_sso,P.p),ln('พรบ',D[curYear].opd_prb,P.ro)]);
-  mk('p2_gov_visits','line',YR5GOV,[ln('Visit OPD',p2_gov_visits,P.g)],{lg:false,u:'v'});
-  mk('p2_gov_rev_visit','line',YR5GOV,[ln('รายได้เฉลี่ย/Visit',p2_gov_rev_v,P.a)],{lg:false,u:'bv'});
+  mk('p2_gov_visits','line',YR5GOV,[ln('Visit OPD',p2_gov_visits,P.g)],{lg:false,u:'v',dl:true});
+  mk('p2_gov_rev_visit','line',YR5GOV,[ln('รายได้เฉลี่ย/Visit',p2_gov_rev_v,P.a)],{lg:false,u:'bv',dl:true});
 
   // ── ทันตกรรม ──
-  mk('p2_dent_inc','line',YR3,[ln('รายได้ทันตกรรม',p2_dent_inc3,P.a,true)],{lg:false});
+  mk('p2_dent_inc','line',YR3,[ln('รายได้ทันตกรรม',p2_dent_inc3,P.a,true)],{lg:false,dl:true});
   mk('p2_dent_monthly','line',getM(),[ln('รายได้ทันตกรรม',D[curYear].incDent,P.a,true)],{lg:false});
   // c_dental built in buildP1
   mk('p2_dent_rights','line',getM(),[ln('ข้าราชการ',D[curYear].dent_gov,P.g),ln('อปท',D[curYear].dent_loc,P.a),ln('ปกส',D[curYear].dent_sso,P.p),ln('สำรองจ่าย/อื่น',D[curYear].dent_else,P.ro)]);
-  mk('p2_dent_visits','line',YR5GOV,[ln('Visit ทันตกรรม',p2_dent_visits,P.a)],{lg:false,u:'v'});
-  mk('p2_dent_rev','line',YR5GOV,[ln('รายได้เฉลี่ย/Visit',p2_dent_rev,P.ro)],{lg:false,u:'bv'});
+  mk('p2_dent_visits','line',YR5GOV,[ln('Visit ทันตกรรม',p2_dent_visits,P.a)],{lg:false,u:'v',dl:true});
+  mk('p2_dent_rev','line',YR5GOV,[ln('รายได้เฉลี่ย/Visit',p2_dent_rev,P.ro)],{lg:false,u:'bv',dl:true});
 
   // ── แผนไทย ──
-  mk('p2_thai_inc','line',YR3,[ln('รายได้แผนไทย',p2_thai_inc3,P.t,true)],{lg:false});
+  mk('p2_thai_inc','line',YR3,[ln('รายได้แผนไทย',p2_thai_inc3,P.t,true)],{lg:false,dl:true});
   mk('p2_thai_monthly','line',getM(),[ln('รายได้แผนไทย',D[curYear].incThai,P.t,true)],{lg:false});
   // c_thai built in buildP1
   mk('p2_thai_rights','line',getM(),[ln('ข้าราชการ',D[curYear].thai_gov,P.g),ln('อปท',D[curYear].thai_loc,P.a)]);
-  mk('p2_thai_visits','line',YR5GOV,[ln('Visit แผนไทย',p2_thai_visits,P.t)],{lg:false,u:'v'});
-  mk('p2_thai_rev','line',YR5GOV,[ln('รายได้เฉลี่ย/Visit',p2_thai_rev,P.s)],{lg:false,u:'bv'});
+  mk('p2_thai_visits','line',YR5GOV,[ln('Visit แผนไทย',p2_thai_visits,P.t)],{lg:false,u:'v',dl:true});
+  mk('p2_thai_rev','line',YR5GOV,[ln('รายได้เฉลี่ย/Visit',p2_thai_rev,P.s)],{lg:false,u:'bv',dl:true});
 
   // ── กายภาพ ──
-  mk('p2_phys_inc','line',YR3,[ln('รายได้กายภาพ',p2_phys_inc3,P.p,true)],{lg:false});
+  mk('p2_phys_inc','line',YR3,[ln('รายได้กายภาพ',p2_phys_inc3,P.p,true)],{lg:false,dl:true});
   mk('p2_phys_monthly','line',getM(),[ln('รายได้กายภาพ',D[curYear].incPhys,P.p,true)],{lg:false});
   // c_phys built in buildP1
   mk('p2_phys_rights','line',getM(),[ln('ข้าราชการ',D[curYear].phys_gov,P.g),ln('อปท',D[curYear].phys_loc,P.a)]);
-  mk('p2_phys_visits','line',YR5GOV,[ln('Visit กายภาพ',p2_phys_visits,P.p)],{lg:false,u:'v'});
-  mk('p2_phys_rev','line',YR5GOV,[ln('รายได้เฉลี่ย/Visit',p2_phys_rev,P.ro)],{lg:false,u:'bv'});
+  mk('p2_phys_visits','line',YR5GOV,[ln('Visit กายภาพ',p2_phys_visits,P.p)],{lg:false,u:'v',dl:true});
+  mk('p2_phys_rev','line',YR5GOV,[ln('รายได้เฉลี่ย/Visit',p2_phys_rev,P.ro)],{lg:false,u:'bv',dl:true});
 
   mk('p2_pp_line','line',PP_LBL,[ln('ปี 66',p2_pp[0],P.b),ln('ปี 67',p2_pp[1],P.g),ln('ปี 68',p2_pp[2],P.a)]);
 }
