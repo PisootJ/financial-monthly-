@@ -350,8 +350,8 @@ table.t tr:hover td{background:rgba(200,190,180,.06);}
   <div class="cc"><div class="ct">3 · รายได้ทันตกรรม แยกตามสิทธิ์ (ปีล่าสุด)</div><div class="cs">บาท · ข้าราชการ / อปท / ปกส / อื่นๆ</div><div class="cw h200"><canvas id="p2_dent_rights"></canvas></div></div>
 </div>
 <div class="cg c2" style="margin-top:11px;">
-  <div class="cc"><div class="ct">4 · Visit ทันตกรรม (ข้าราชการ/อปท) ย้อนหลัง</div><div class="cs">ครั้ง · ปี 65 / 66 / 67</div><div class="cw h180"><canvas id="p2_dent_visits"></canvas></div></div>
-  <div class="cc"><div class="ct">5 · รายได้เฉลี่ยต่อ Visit ทันตกรรม ย้อนหลัง</div><div class="cs">บาท/ครั้ง · ปี 65 / 66 / 67</div><div class="cw h180"><canvas id="p2_dent_rev"></canvas></div></div>
+  <div class="cc"><div class="ct">4 · Visit ทันตกรรม (ข้าราชการ/อปท) ย้อนหลัง</div><div class="cs">ครั้ง · ปี 65 / 66 / 67 / 68 / 69</div><div class="cw h180"><canvas id="p2_dent_visits"></canvas></div></div>
+  <div class="cc"><div class="ct">5 · รายได้เฉลี่ยต่อ Visit ทันตกรรม ย้อนหลัง</div><div class="cs">บาท/ครั้ง · ปี 65 / 66 / 67 / 68 / 69</div><div class="cw h180"><canvas id="p2_dent_rev"></canvas></div></div>
 </div>
 
 <!-- P2.5 แผนไทย -->
@@ -363,8 +363,8 @@ table.t tr:hover td{background:rgba(200,190,180,.06);}
   <div class="cc"><div class="ct">3 · รายได้แผนไทย แยกตามสิทธิ์ (ปีล่าสุด)</div><div class="cs">บาท · ข้าราชการ / อปท</div><div class="cw h200"><canvas id="p2_thai_rights"></canvas></div></div>
 </div>
 <div class="cg c2" style="margin-top:11px;">
-  <div class="cc"><div class="ct">4 · Visit แผนไทย (ข้าราชการ/อปท) ย้อนหลัง</div><div class="cs">ครั้ง · ปี 65 / 66 / 67</div><div class="cw h180"><canvas id="p2_thai_visits"></canvas></div></div>
-  <div class="cc"><div class="ct">5 · รายได้เฉลี่ยต่อ Visit แผนไทย ย้อนหลัง</div><div class="cs">บาท/ครั้ง · ปี 65 / 66 / 67</div><div class="cw h180"><canvas id="p2_thai_rev"></canvas></div></div>
+  <div class="cc"><div class="ct">4 · Visit แผนไทย (ข้าราชการ/อปท) ย้อนหลัง</div><div class="cs">ครั้ง · ปี 65 / 66 / 67 / 68 / 69</div><div class="cw h180"><canvas id="p2_thai_visits"></canvas></div></div>
+  <div class="cc"><div class="ct">5 · รายได้เฉลี่ยต่อ Visit แผนไทย ย้อนหลัง</div><div class="cs">บาท/ครั้ง · ปี 65 / 66 / 67 / 68 / 69</div><div class="cw h180"><canvas id="p2_thai_rev"></canvas></div></div>
 </div>
 
 <!-- P2.6 กายภาพ -->
@@ -376,8 +376,8 @@ table.t tr:hover td{background:rgba(200,190,180,.06);}
   <div class="cc"><div class="ct">3 · รายได้กายภาพ แยกตามสิทธิ์ (ปีล่าสุด)</div><div class="cs">บาท · ข้าราชการ / อปท</div><div class="cw h200"><canvas id="p2_phys_rights"></canvas></div></div>
 </div>
 <div class="cg c2" style="margin-top:11px;">
-  <div class="cc"><div class="ct">4 · Visit กายภาพ (ข้าราชการ/อปท) ย้อนหลัง</div><div class="cs">ครั้ง · ปี 65 / 66 / 67</div><div class="cw h180"><canvas id="p2_phys_visits"></canvas></div></div>
-  <div class="cc"><div class="ct">5 · รายได้เฉลี่ยต่อ Visit กายภาพ ย้อนหลัง</div><div class="cs">บาท/ครั้ง · ปี 65 / 66 / 67</div><div class="cw h180"><canvas id="p2_phys_rev"></canvas></div></div>
+  <div class="cc"><div class="ct">4 · Visit กายภาพ (ข้าราชการ/อปท) ย้อนหลัง</div><div class="cs">ครั้ง · ปี 65 / 66 / 67 / 68 / 69</div><div class="cw h180"><canvas id="p2_phys_visits"></canvas></div></div>
+  <div class="cc"><div class="ct">5 · รายได้เฉลี่ยต่อ Visit กายภาพ ย้อนหลัง</div><div class="cs">บาท/ครั้ง · ปี 65 / 66 / 67 / 68 / 69</div><div class="cw h180"><canvas id="p2_phys_rev"></canvas></div></div>
 </div>
 
 <!-- P2.7 PP Fee -->
@@ -964,6 +964,7 @@ function setYear(yr){
 /* ══ PAGE 2 DATA (unchanged) ══ */
 const YR3=['ปี 66','ปี 67','ปี 68'];
 const YR3GOV=['ปี 65','ปี 66','ปี 67'];
+const YR5GOV=['ปี 65','ปี 66','ปี 67','ปี 68','ปี 69'];
 const YR8=['ปี 61','ปี 62','ปี 63','ปี 64','ปี 65','ปี 66','ปี 67','ปี 68'];
 const p2_total_inc=[10563499.56,9769601.98,10007562];
 const p2_ip_inc3=[6200542.06,4965227.29,5063710];
@@ -976,12 +977,12 @@ const p2_admit_hist=[136,142,126,115,97,144,125,130];
 const p2_bor_hist=[43.71,38.87,34.89,43.60,41.28,39.86,31.61,29.66];
 const p2_gov_visits=[6198,4606,5384];
 const p2_gov_rev_v=[560,660,909];
-const p2_dent_visits=[305,335,475];
-const p2_dent_rev=[1294,1378,2406];
-const p2_thai_visits=[226,422,741];
-const p2_thai_rev=[470,534,422];
-const p2_phys_visits=[231,463,572];
-const p2_phys_rev=[1263,1482,1770];
+const p2_dent_visits=[305,335,475,312,386];
+const p2_dent_rev=[1294,1378,2406,1713,1460];
+const p2_thai_visits=[226,422,741,424,475];
+const p2_thai_rev=[470,534,422,437,621];
+const p2_phys_visits=[231,463,572,409,437];
+const p2_phys_rev=[1263,1482,1770,1674,2739];
 const PP_LBL=['ฝากครรภ์ ANC','ตรวจหลังคลอด PNC','คุมกำเนิด FP','คัดกรองมะเร็งปากมดลูก','คัดกรองวัณโรค','วัคซีนไข้หวัดใหญ่'];
 const p2_pp=[[89435,6353,16744,550,332829,3902],[188651,9533,17947,100,430593,62062],[428247,17354,57158,1660,403722,66239]];
 const p2_growth_lbl=['ทันตกรรม','แผนไทย','กายภาพ','OPD','IPD','รวม'];
@@ -1036,24 +1037,24 @@ function buildP2(){
   mk('p2_dent_monthly','line',getM(),[ln('รายได้ทันตกรรม',D[curYear].incDent,P.a,true)],{lg:false});
   // c_dental built in buildP1
   mk('p2_dent_rights','line',getM(),[ln('ข้าราชการ',D[curYear].dent_gov,P.g),ln('อปท',D[curYear].dent_loc,P.a),ln('ปกส',D[curYear].dent_sso,P.p),ln('สำรองจ่าย/อื่น',D[curYear].dent_else,P.ro)]);
-  mk('p2_dent_visits','line',YR3GOV,[ln('Visit ทันตกรรม',p2_dent_visits,P.a)],{lg:false,u:'v'});
-  mk('p2_dent_rev','line',YR3GOV,[ln('รายได้เฉลี่ย/Visit',p2_dent_rev,P.ro)],{lg:false,u:'bv'});
+  mk('p2_dent_visits','line',YR5GOV,[ln('Visit ทันตกรรม',p2_dent_visits,P.a)],{lg:false,u:'v'});
+  mk('p2_dent_rev','line',YR5GOV,[ln('รายได้เฉลี่ย/Visit',p2_dent_rev,P.ro)],{lg:false,u:'bv'});
 
   // ── แผนไทย ──
   mk('p2_thai_inc','line',YR3,[ln('รายได้แผนไทย',p2_thai_inc3,P.t,true)],{lg:false});
   mk('p2_thai_monthly','line',getM(),[ln('รายได้แผนไทย',D[curYear].incThai,P.t,true)],{lg:false});
   // c_thai built in buildP1
   mk('p2_thai_rights','line',getM(),[ln('ข้าราชการ',D[curYear].thai_gov,P.g),ln('อปท',D[curYear].thai_loc,P.a)]);
-  mk('p2_thai_visits','line',YR3GOV,[ln('Visit แผนไทย',p2_thai_visits,P.t)],{lg:false,u:'v'});
-  mk('p2_thai_rev','line',YR3GOV,[ln('รายได้เฉลี่ย/Visit',p2_thai_rev,P.s)],{lg:false,u:'bv'});
+  mk('p2_thai_visits','line',YR5GOV,[ln('Visit แผนไทย',p2_thai_visits,P.t)],{lg:false,u:'v'});
+  mk('p2_thai_rev','line',YR5GOV,[ln('รายได้เฉลี่ย/Visit',p2_thai_rev,P.s)],{lg:false,u:'bv'});
 
   // ── กายภาพ ──
   mk('p2_phys_inc','line',YR3,[ln('รายได้กายภาพ',p2_phys_inc3,P.p,true)],{lg:false});
   mk('p2_phys_monthly','line',getM(),[ln('รายได้กายภาพ',D[curYear].incPhys,P.p,true)],{lg:false});
   // c_phys built in buildP1
   mk('p2_phys_rights','line',getM(),[ln('ข้าราชการ',D[curYear].phys_gov,P.g),ln('อปท',D[curYear].phys_loc,P.a)]);
-  mk('p2_phys_visits','line',YR3GOV,[ln('Visit กายภาพ',p2_phys_visits,P.p)],{lg:false,u:'v'});
-  mk('p2_phys_rev','line',YR3GOV,[ln('รายได้เฉลี่ย/Visit',p2_phys_rev,P.ro)],{lg:false,u:'bv'});
+  mk('p2_phys_visits','line',YR5GOV,[ln('Visit กายภาพ',p2_phys_visits,P.p)],{lg:false,u:'v'});
+  mk('p2_phys_rev','line',YR5GOV,[ln('รายได้เฉลี่ย/Visit',p2_phys_rev,P.ro)],{lg:false,u:'bv'});
 
   mk('p2_pp_line','line',PP_LBL,[ln('ปี 66',p2_pp[0],P.b),ln('ปี 67',p2_pp[1],P.g),ln('ปี 68',p2_pp[2],P.a)]);
 }
