@@ -337,8 +337,8 @@ table.t tr:hover td{background:rgba(200,190,180,.06);}
   <div class="cc"><div class="ct">3 · รายได้ OPD แยกตามสิทธิ์ (ปีล่าสุด)</div><div class="cs">บาท · UC / ข้าราชการ / อปท / ปกส / พรบ</div><div class="cw h200"><canvas id="p2_opd_rights"></canvas></div></div>
 </div>
 <div class="cg c2" style="margin-top:11px;">
-  <div class="cc"><div class="ct">4 · จำนวน Visit (ข้าราชการ/อปท) ย้อนหลัง</div><div class="cs">ครั้ง · ปี 65 / 66 / 67</div><div class="cw h180"><canvas id="p2_gov_visits"></canvas></div></div>
-  <div class="cc"><div class="ct">5 · รายได้เฉลี่ยต่อ Visit (ข้าราชการ/อปท) ย้อนหลัง</div><div class="cs">บาท/ครั้ง · ปี 65 / 66 / 67</div><div class="cw h180"><canvas id="p2_gov_rev_visit"></canvas></div></div>
+  <div class="cc"><div class="ct">4 · จำนวน Visit OPD (ข้าราชการ/อปท) ย้อนหลัง</div><div class="cs">ครั้ง · ปี 65 / 66 / 67 / 68 / 69</div><div class="cw h180"><canvas id="p2_gov_visits"></canvas></div></div>
+  <div class="cc"><div class="ct">5 · รายได้เฉลี่ยต่อ Visit OPD (ข้าราชการ/อปท) ย้อนหลัง</div><div class="cs">บาท/ครั้ง · ปี 65 / 66 / 67 / 68 / 69</div><div class="cw h180"><canvas id="p2_gov_rev_visit"></canvas></div></div>
 </div>
 
 <!-- P2.4 ทันตกรรม -->
@@ -975,8 +975,8 @@ const p2_phys_inc3=[684278,1012192,887324.50];
 const p2_rw_hist=[897.34,898.60,781.34,768.07,698.24,905.59,807.59,763.55];
 const p2_admit_hist=[136,142,126,115,97,144,125,130];
 const p2_bor_hist=[43.71,38.87,34.89,43.60,41.28,39.86,31.61,29.66];
-const p2_gov_visits=[6198,4606,5384];
-const p2_gov_rev_v=[560,660,909];
+const p2_gov_visits=[1441,1527,1745,1560,1540];
+const p2_gov_rev_v=[762,664,613,860,1198];
 const p2_dent_visits=[305,335,475,312,386];
 const p2_dent_rev=[1294,1378,2406,1713,1460];
 const p2_thai_visits=[226,422,741,424,475];
@@ -1029,8 +1029,8 @@ function buildP2(){
   mk('p2_op_monthly','line',getM(),[ln('รายได้ OPD',D[curYear].incOPD,P.b,true)],{lg:false});
   // c_opd built in buildP1
   mk('p2_opd_rights','line',getM(),[ln('UC',D[curYear].opd_uc,P.b),ln('ข้าราชการ',D[curYear].opd_gov,P.g),ln('อปท',D[curYear].opd_loc,P.a),ln('ปกส',D[curYear].opd_sso,P.p),ln('พรบ',D[curYear].opd_prb,P.ro)]);
-  mk('p2_gov_visits','line',YR3GOV,[ln('Visit รวม',p2_gov_visits,P.g)],{lg:false,u:'v'});
-  mk('p2_gov_rev_visit','line',YR3GOV,[ln('รายได้เฉลี่ย/Visit',p2_gov_rev_v,P.a)],{lg:false,u:'bv'});
+  mk('p2_gov_visits','line',YR5GOV,[ln('Visit OPD',p2_gov_visits,P.g)],{lg:false,u:'v'});
+  mk('p2_gov_rev_visit','line',YR5GOV,[ln('รายได้เฉลี่ย/Visit',p2_gov_rev_v,P.a)],{lg:false,u:'bv'});
 
   // ── ทันตกรรม ──
   mk('p2_dent_inc','line',YR3,[ln('รายได้ทันตกรรม',p2_dent_inc3,P.a,true)],{lg:false});
