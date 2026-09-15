@@ -674,6 +674,7 @@ function mk(id,type,labels,datasets,opts={}){
   const el=document.getElementById(id);if(!el)return;
   CH[id]=new Chart(el,{type,data:{labels,datasets},options:{
     responsive:true,maintainAspectRatio:false,spanGaps:true,
+    layout:{padding:{top:opts.dl?24:0}},
     plugins:{
       legend:{display:opts.lg!==false,position:'bottom',labels:{color:'#a09080',font:{family:'Sarabun',size:10},boxWidth:10,padding:7}},
       tooltip:{backgroundColor:'#fdfaf7',borderColor:'#ddd5ca',borderWidth:1,titleColor:'#3a2e24',bodyColor:'#7a6858',padding:8,
@@ -1019,7 +1020,7 @@ function buildP2(){
       {label:'BOR (%)',data:p2_bor_hist,borderColor:'rgba(90,155,196,1)',backgroundColor:'transparent',fill:false,tension:0,pointRadius:4,yAxisID:'y2',borderWidth:2,datalabels:{color:'rgba(60,110,150,1)'}},
       {label:'เกณฑ์ BOR 35%',data:YR8.map(()=>35),borderColor:'rgba(212,168,106,.7)',borderDash:[6,4],borderWidth:1.5,pointRadius:0,fill:false,tension:0,yAxisID:'y2',datalabels:{display:false}},
     ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{
+    options:{responsive:true,maintainAspectRatio:false,layout:{padding:{top:24}},plugins:{
       legend:{position:'bottom',labels:{color:'#a09080',font:{family:'Sarabun',size:10},boxWidth:10,padding:7}},
       tooltip:{backgroundColor:'#fdfaf7',borderColor:'#ddd5ca',borderWidth:1,titleColor:'#3a2e24',bodyColor:'#7a6858',padding:8},
       datalabels:{display:true,align:'top',anchor:'end',offset:6,font:{family:'Sarabun',size:9,weight:700},formatter:(v,ctx)=>v==null?'':(ctx.dataset.yAxisID==='y2'?Number(v).toFixed(1)+'%':Number(v).toLocaleString('th-TH'))}
