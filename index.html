@@ -310,30 +310,30 @@ table.t tr:hover td{background:rgba(200,190,180,.06);}
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px;margin-bottom:4px;" id="kpiRow2"></div>
 
 <!-- P2.1 ภาพรวม -->
-<div class="sbar g"><span class="stitle">1 · ภาพรวมรายได้รวม ย้อนหลัง 3 ปี (ปี 66–68)</span><span class="snote">รายได้รวม · แนวโน้มการเติบโต</span></div>
+<div class="sbar g"><span class="stitle">1 · ภาพรวมรายได้รวม ย้อนหลัง 4 ปี (ปี 66–69)</span><span class="snote">รายได้รวม · แนวโน้มการเติบโต</span></div>
 <div class="cg c2">
-  <div class="cc"><div class="ct">รายได้รวมทั้งหมด ย้อนหลัง 3 ปี</div><div class="cs">บาท · ปี 66 / 67 / 68</div><div class="cw h220"><canvas id="p2_total"></canvas></div></div>
-  <div class="cc"><div class="ct">อัตราการเติบโตรายได้ ปี 67 → 68 แยกหน่วยงาน</div><div class="cs">% · สีเขียว = เพิ่ม / สีแดง = ลด</div><div class="cw h220"><canvas id="p2_growth"></canvas></div></div>
+  <div class="cc"><div class="ct">รายได้รวมทั้งหมด ย้อนหลัง 4 ปี</div><div class="cs">บาท · ปี 66 / 67 / 68 / 69</div><div class="cw h220"><canvas id="p2_total"></canvas></div></div>
+  <div class="cc"><div class="ct">อัตราการเติบโตรายได้ ปี 68 → 69 แยกหน่วยงาน</div><div class="cs">% · สีเขียว = เพิ่ม / สีแดง = ลด</div><div class="cw h220"><canvas id="p2_growth"></canvas></div></div>
 </div>
 
 <!-- P2.2 IPD -->
 <hr class="divider">
 <div class="sbar p"><span class="stitle">2 · IPD (ผู้ป่วยใน) — Productivity</span><span class="snote">กล่อง 1: รายได้รวมย้อนหลัง · 2: รายได้รายเดือน · 3: แยกสิทธิ์ · 4: Adj.RW · 5: Admit &amp; BOR</span></div>
 <div class="cg c3">
-  <div class="cc"><div class="ct">1 · รายได้ IPD ย้อนหลัง 3 ปี</div><div class="cs">บาท · ปี 66 / 67 / 68</div><div class="cw h200"><canvas id="p2_ip_inc"></canvas></div></div>
+  <div class="cc"><div class="ct">1 · รายได้ IPD ย้อนหลัง 4 ปี</div><div class="cs">บาท · ปี 66 / 67 / 68 / 69</div><div class="cw h200"><canvas id="p2_ip_inc"></canvas></div></div>
   <div class="cc"><div class="ct">2 · รายได้ IPD รายเดือน (ปีล่าสุด)</div><div class="cs">บาท รายเดือน</div><div class="cw h200"><canvas id="p2_ip_monthly"></canvas></div></div>
   <div class="cc"><div class="ct">3 · รายได้ IPD แยกตามสิทธิ์ (ปีล่าสุด)</div><div class="cs">บาท · UC / ข้าราชการ / อปท / ปกส / พรบ</div><div class="cw h200"><canvas id="p2_ipd_rights"></canvas></div></div>
 </div>
 <div class="cg c2" style="margin-top:11px;">
-  <div class="cc"><div class="ct">4 · Sum Adjust RW ย้อนหลัง</div><div class="cs">RW · ปี 61–68</div><div class="cw h200"><canvas id="p2_rw_hist"></canvas></div></div>
-  <div class="cc"><div class="ct">5 · ยอด Admit เฉลี่ย/เดือน &amp; อัตราครองเตียง (BOR) ย้อนหลัง</div><div class="cs">ราย &amp; % · ปี 61–68 · เส้นประ BOR = เกณฑ์ 35%</div><div class="cw h200"><canvas id="p2_admit_bor_hist"></canvas></div></div>
+  <div class="cc"><div class="ct">4 · Sum Adjust RW ย้อนหลัง</div><div class="cs">RW · ปี 61–69</div><div class="cw h200"><canvas id="p2_rw_hist"></canvas></div></div>
+  <div class="cc"><div class="ct">5 · ยอด Admit เฉลี่ย/เดือน &amp; อัตราครองเตียง (BOR) ย้อนหลัง</div><div class="cs" id="ab_sub">ราย · ปี 61–69</div><div class="ipd-cmp" style="margin:2px 0 6px;"><button class="ipd-cmp-btn on ab-btn" data-m="admit" onclick="setAB('admit')" style="background:rgba(85,160,160,.9);">Admit เฉลี่ย/เดือน</button><button class="ipd-cmp-btn ab-btn" data-m="bor" onclick="setAB('bor')">อัตราครองเตียง (BOR)</button><button class="ipd-cmp-btn ab-btn" data-m="both" onclick="setAB('both')">ดูทั้งสอง</button></div><div class="cw h200"><canvas id="p2_admit_bor_hist"></canvas></div></div>
 </div>
 
 <!-- P2.3 OPD -->
 <hr class="divider">
 <div class="sbar a"><span class="stitle">3 · OPD (ผู้ป่วยนอก) — Productivity</span><span class="snote">กล่อง 1: รายได้รวมย้อนหลัง · 2: รายได้รายเดือน · 3: แยกสิทธิ์ · 4: Visit · 5: รายได้เฉลี่ย/Visit</span></div>
 <div class="cg c3">
-  <div class="cc"><div class="ct">1 · รายได้ OPD ย้อนหลัง 3 ปี</div><div class="cs">บาท · ปี 66 / 67 / 68</div><div class="cw h200"><canvas id="p2_op_inc"></canvas></div></div>
+  <div class="cc"><div class="ct">1 · รายได้ OPD ย้อนหลัง 4 ปี</div><div class="cs">บาท · ปี 66 / 67 / 68 / 69</div><div class="cw h200"><canvas id="p2_op_inc"></canvas></div></div>
   <div class="cc"><div class="ct">2 · รายได้ OPD รายเดือน (ปีล่าสุด)</div><div class="cs">บาท รายเดือน</div><div class="cw h200"><canvas id="p2_op_monthly"></canvas></div></div>
   <div class="cc"><div class="ct">3 · รายได้ OPD แยกตามสิทธิ์ (ปีล่าสุด)</div><div class="cs">บาท · UC / ข้าราชการ / อปท / ปกส / พรบ</div><div class="cw h200"><canvas id="p2_opd_rights"></canvas></div></div>
 </div>
@@ -346,7 +346,7 @@ table.t tr:hover td{background:rgba(200,190,180,.06);}
 <hr class="divider">
 <div class="sbar a" style="border-color:var(--amber);background:linear-gradient(90deg,var(--amber-bg),transparent);"><span class="stitle">4 · ทันตกรรม — Productivity</span><span class="snote">กล่อง 1: รายได้รวมย้อนหลัง · 2: รายได้รายเดือน · 3: แยกสิทธิ์ · 4: Visit · 5: รายได้เฉลี่ย/Visit</span></div>
 <div class="cg c3">
-  <div class="cc"><div class="ct">1 · รายได้ทันตกรรม ย้อนหลัง 3 ปี</div><div class="cs">บาท · ปี 66 / 67 / 68</div><div class="cw h200"><canvas id="p2_dent_inc"></canvas></div></div>
+  <div class="cc"><div class="ct">1 · รายได้ทันตกรรม ย้อนหลัง 4 ปี</div><div class="cs">บาท · ปี 66 / 67 / 68 / 69</div><div class="cw h200"><canvas id="p2_dent_inc"></canvas></div></div>
   <div class="cc"><div class="ct">2 · รายได้ทันตกรรม รายเดือน (ปีล่าสุด)</div><div class="cs">บาท รายเดือน</div><div class="cw h200"><canvas id="p2_dent_monthly"></canvas></div></div>
   <div class="cc"><div class="ct">3 · รายได้ทันตกรรม แยกตามสิทธิ์ (ปีล่าสุด)</div><div class="cs">บาท · ข้าราชการ / อปท / ปกส / อื่นๆ</div><div class="cw h200"><canvas id="p2_dent_rights"></canvas></div></div>
 </div>
@@ -359,7 +359,7 @@ table.t tr:hover td{background:rgba(200,190,180,.06);}
 <hr class="divider">
 <div class="sbar t"><span class="stitle">5 · แผนไทย — Productivity</span><span class="snote">กล่อง 1: รายได้รวมย้อนหลัง · 2: รายได้รายเดือน · 3: แยกสิทธิ์ · 4: Visit · 5: รายได้เฉลี่ย/Visit</span></div>
 <div class="cg c3">
-  <div class="cc"><div class="ct">1 · รายได้แผนไทย ย้อนหลัง 3 ปี</div><div class="cs">บาท · ปี 66 / 67 / 68</div><div class="cw h200"><canvas id="p2_thai_inc"></canvas></div></div>
+  <div class="cc"><div class="ct">1 · รายได้แผนไทย ย้อนหลัง 4 ปี</div><div class="cs">บาท · ปี 66 / 67 / 68 / 69</div><div class="cw h200"><canvas id="p2_thai_inc"></canvas></div></div>
   <div class="cc"><div class="ct">2 · รายได้แผนไทย รายเดือน (ปีล่าสุด)</div><div class="cs">บาท รายเดือน</div><div class="cw h200"><canvas id="p2_thai_monthly"></canvas></div></div>
   <div class="cc"><div class="ct">3 · รายได้แผนไทย แยกตามสิทธิ์ (ปีล่าสุด)</div><div class="cs">บาท · ข้าราชการ / อปท</div><div class="cw h200"><canvas id="p2_thai_rights"></canvas></div></div>
 </div>
@@ -372,7 +372,7 @@ table.t tr:hover td{background:rgba(200,190,180,.06);}
 <hr class="divider">
 <div class="sbar" style="border-color:var(--purple);background:linear-gradient(90deg,var(--purple-bg),transparent);"><span class="stitle">6 · กายภาพบำบัด — Productivity</span><span class="snote">กล่อง 1: รายได้รวมย้อนหลัง · 2: รายได้รายเดือน · 3: แยกสิทธิ์ · 4: Visit · 5: รายได้เฉลี่ย/Visit</span></div>
 <div class="cg c3">
-  <div class="cc"><div class="ct">1 · รายได้กายภาพ ย้อนหลัง 3 ปี</div><div class="cs">บาท · ปี 66 / 67 / 68</div><div class="cw h200"><canvas id="p2_phys_inc"></canvas></div></div>
+  <div class="cc"><div class="ct">1 · รายได้กายภาพ ย้อนหลัง 4 ปี</div><div class="cs">บาท · ปี 66 / 67 / 68 / 69</div><div class="cw h200"><canvas id="p2_phys_inc"></canvas></div></div>
   <div class="cc"><div class="ct">2 · รายได้กายภาพ รายเดือน (ปีล่าสุด)</div><div class="cs">บาท รายเดือน</div><div class="cw h200"><canvas id="p2_phys_monthly"></canvas></div></div>
   <div class="cc"><div class="ct">3 · รายได้กายภาพ แยกตามสิทธิ์ (ปีล่าสุด)</div><div class="cs">บาท · ข้าราชการ / อปท</div><div class="cw h200"><canvas id="p2_phys_rights"></canvas></div></div>
 </div>
@@ -383,7 +383,7 @@ table.t tr:hover td{background:rgba(200,190,180,.06);}
 
 <!-- P2.7 PP Fee -->
 <hr class="divider">
-<div class="sbar s"><span class="stitle">7 · PP Fee Schedule — บริการส่งเสริมสุขภาพ ย้อนหลัง 3 ปี</span><span class="snote">ปี 66 / 67 / 68</span></div>
+<div class="sbar s"><span class="stitle">7 · PP Fee Schedule — บริการส่งเสริมสุขภาพ ย้อนหลัง 4 ปี</span><span class="snote">ปี 66 / 67 / 68 / 69</span></div>
 <div class="cg c1">
   <div class="cc"><div class="ct">รายได้ PP Fee Schedule แยกบริการ</div><div class="cs">บาท · กราฟเส้นตรง</div><div class="cw h260"><canvas id="p2_pp_line"></canvas></div></div>
 </div>
@@ -967,19 +967,19 @@ function setYear(yr){
 }
 
 /* ══ PAGE 2 DATA (unchanged) ══ */
-const YR3=['ปี 66','ปี 67','ปี 68'];
+const YR3=['ปี 66','ปี 67','ปี 68','ปี 69'];
 const YR3GOV=['ปี 65','ปี 66','ปี 67'];
 const YR5GOV=['ปี 65','ปี 66','ปี 67','ปี 68','ปี 69'];
-const YR8=['ปี 61','ปี 62','ปี 63','ปี 64','ปี 65','ปี 66','ปี 67','ปี 68'];
-const p2_total_inc=[10563499.56,9769601.98,10007562];
-const p2_ip_inc3=[6200542.06,4965227.29,5063710];
-const p2_op_inc3=[2273678,2336593.19,2917020];
-const p2_dent_inc3=[824431.50,1143055.50,876161.50];
-const p2_thai_inc3=[204295.50,312534,263346];
-const p2_phys_inc3=[684278,1012192,887324.50];
-const p2_rw_hist=[897.34,898.60,781.34,768.07,698.24,905.59,807.59,763.55];
-const p2_admit_hist=[136,142,126,115,97,144,125,130];
-const p2_bor_hist=[43.71,38.87,34.89,43.60,41.28,39.86,31.61,29.66];
+const YR8=['ปี 61','ปี 62','ปี 63','ปี 64','ปี 65','ปี 66','ปี 67','ปี 68','ปี 69'];
+const p2_total_inc=[10563499.56,9769601.98,10007562,14050402.5];
+const p2_ip_inc3=[6200542.06,4965227.29,5063710,6338795.75];
+const p2_op_inc3=[2649952.5,2336593.19,2917020,4785948.25];
+const p2_dent_inc3=[824431.5,1143055.5,876161.5,875095.5];
+const p2_thai_inc3=[204295.5,312534,263346,379883];
+const p2_phys_inc3=[684278,1012192,887324.5,1670680];
+const p2_rw_hist=[897.34,898.60,781.34,768.07,698.24,905.59,807.59,763.55,1011.48];
+const p2_admit_hist=[136,142,126,115,97,144,125,130,145];
+const p2_bor_hist=[43.71,38.87,34.89,43.60,41.28,39.86,31.61,29.66,36.31];
 const p2_gov_visits=[1441,1527,1745,1560,1540];
 const p2_gov_rev_v=[762,664,613,860,1198];
 const p2_dent_visits=[305,335,475,312,386];
@@ -989,21 +989,48 @@ const p2_thai_rev=[470,534,422,437,621];
 const p2_phys_visits=[231,463,572,409,437];
 const p2_phys_rev=[1263,1482,1770,1674,2739];
 const PP_LBL=['ฝากครรภ์ ANC','ตรวจหลังคลอด PNC','คุมกำเนิด FP','คัดกรองมะเร็งปากมดลูก','คัดกรองวัณโรค','วัคซีนไข้หวัดใหญ่'];
-const p2_pp=[[89435,6353,16744,550,332829,3902],[188651,9533,17947,100,430593,62062],[428247,17354,57158,1660,403722,66239]];
+const p2_pp=[[182270,9420,63200,14600,24980,0],[127350,2700,55640,200,25100,0],[155850,5850,11260,750,8320,28340],[169310,5535,14260,0,90980,0]];
 const p2_growth_lbl=['ทันตกรรม','แผนไทย','กายภาพ','OPD','IPD','รวม'];
-const p2_growth_val=[-23.35,-15.74,-12.34,24.84,1.98,2.44];
+const p2_growth_val=[-0.12,44.25,88.28,64.07,25.18,40.40];
+
+let abMode='admit';
+function setAB(m){abMode=m;buildAB();}
+function buildAB(){
+  const m=abMode;
+  document.querySelectorAll('.ab-btn').forEach(b=>{const on=b.dataset.m===m;b.classList.toggle('on',on);b.style.background=on?(m==='bor'?'rgba(90,155,196,.9)':m==='both'?'rgba(130,105,160,.9)':'rgba(85,160,160,.9)'):'';});
+  const sub=document.getElementById('ab_sub');
+  if(sub)sub.textContent=m==='admit'?'ราย/เดือน · ปี 61–69':m==='bor'?'% · ปี 61–69 · เส้นประ = เกณฑ์ BOR 35%':'ราย & % · ปี 61–69 · เส้นประ BOR = เกณฑ์ 35%';
+  if(CH['p2_admit_bor_hist'])CH['p2_admit_bor_hist'].destroy();
+  const elab=document.getElementById('p2_admit_bor_hist');
+  if(!elab)return;
+  const sa=m!=='bor',sb=m!=='admit';
+  const ds=[];
+  if(sa)ds.push({label:'Admit เฉลี่ย/เดือน (ราย)',data:p2_admit_hist,borderColor:'rgba(85,160,160,1)',backgroundColor:'rgba(122,184,184,.12)',fill:true,tension:0,pointRadius:4,yAxisID:'y',borderWidth:2,datalabels:{color:'rgba(60,120,120,1)'}});
+  if(sb){ds.push({label:'BOR (%)',data:p2_bor_hist,borderColor:'rgba(90,155,196,1)',backgroundColor:'transparent',fill:false,tension:0,pointRadius:4,yAxisID:'y2',borderWidth:2,datalabels:{color:'rgba(60,110,150,1)'}});
+    ds.push({label:'เกณฑ์ BOR 35%',data:YR8.map(()=>35),borderColor:'rgba(212,168,106,.7)',borderDash:[6,4],borderWidth:1.5,pointRadius:0,fill:false,tension:0,yAxisID:'y2',datalabels:{display:false}});}
+  CH['p2_admit_bor_hist']=new Chart(elab,{type:'line',data:{labels:YR8,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,layout:{padding:{top:24}},plugins:{
+      legend:{position:'bottom',labels:{color:'#a09080',font:{family:'Sarabun',size:10},boxWidth:10,padding:7}},
+      tooltip:{backgroundColor:'#fdfaf7',borderColor:'#ddd5ca',borderWidth:1,titleColor:'#3a2e24',bodyColor:'#7a6858',padding:8},
+      datalabels:{display:true,align:'top',anchor:'end',offset:6,font:{family:'Sarabun',size:9,weight:700},formatter:(v,ctx)=>v==null?'':(ctx.dataset.yAxisID==='y2'?Number(v).toFixed(1)+'%':Number(v).toLocaleString('th-TH'))}
+    },scales:{
+      x:{grid:{color:'rgba(200,185,170,.18)'},ticks:{color:'#a09080',font:{family:'Sarabun',size:10}}},
+      y:{display:sa,grid:{color:'rgba(200,185,170,.18)'},ticks:{color:'rgba(85,160,160,1)',font:{family:'DM Mono',size:10}},title:{display:true,text:'ราย',color:'rgba(85,160,160,.8)',font:{size:10}}},
+      y2:{display:sb,position:sa?'right':'left',grid:{drawOnChartArea:!sa,color:'rgba(200,185,170,.18)'},ticks:{color:'rgba(90,155,196,1)',font:{family:'DM Mono',size:10},callback:v=>v+'%'},title:{display:true,text:'BOR %',color:'rgba(90,155,196,.8)',font:{size:10}}}
+    }}});
+}
 
 function buildP2(){
   mk('p2_total','line',YR3,[ln('รายได้รวม',p2_total_inc,P.g,true)],{lg:false,dl:true});
   if(CH['p2_growth'])CH['p2_growth'].destroy();
   const elg=document.getElementById('p2_growth');
-  if(elg)CH['p2_growth']=new Chart(elg,{type:'bar',data:{labels:p2_growth_lbl,datasets:[{label:'% โต ปี 67→68',data:p2_growth_val,backgroundColor:p2_growth_val.map(v=>v>=0?'rgba(122,190,155,.85)':'rgba(217,128,128,.85)'),borderColor:p2_growth_val.map(v=>v>=0?'rgba(80,170,120,1)':'rgba(195,90,90,1)'),borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#fdfaf7',borderColor:'#ddd5ca',borderWidth:1,titleColor:'#3a2e24',bodyColor:'#7a6858',padding:9,callbacks:{label:ctx=>` ${ctx.raw>0?'+':''}${ctx.raw}%`}}},scales:{x:{grid:{color:'rgba(200,185,170,.18)'},ticks:{color:'#a09080',font:{family:'Sarabun',size:11}}},y:{grid:{color:'rgba(200,185,170,.18)'},ticks:{color:'#a09080',font:{family:'DM Mono',size:10},callback:v=>v+'%'}}}}});
+  if(elg)CH['p2_growth']=new Chart(elg,{type:'bar',data:{labels:p2_growth_lbl,datasets:[{label:'% โต ปี 68→69',data:p2_growth_val,backgroundColor:p2_growth_val.map(v=>v>=0?'rgba(122,190,155,.85)':'rgba(217,128,128,.85)'),borderColor:p2_growth_val.map(v=>v>=0?'rgba(80,170,120,1)':'rgba(195,90,90,1)'),borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#fdfaf7',borderColor:'#ddd5ca',borderWidth:1,titleColor:'#3a2e24',bodyColor:'#7a6858',padding:9,callbacks:{label:ctx=>` ${ctx.raw>0?'+':''}${ctx.raw}%`}}},scales:{x:{grid:{color:'rgba(200,185,170,.18)'},ticks:{color:'#a09080',font:{family:'Sarabun',size:11}}},y:{grid:{color:'rgba(200,185,170,.18)'},ticks:{color:'#a09080',font:{family:'DM Mono',size:10},callback:v=>v+'%'}}}}});
 
   // helper: get monthly data from curYear
   const getM=()=>D[curYear].months;
 
   // ── IPD ──
-  // 1: ย้อนหลัง 3 ปี
+  // 1: ย้อนหลัง 4 ปี
   mk('p2_ip_inc','line',YR3,[ln('รายได้ IPD',p2_ip_inc3,P.g,true)],{lg:false,dl:true});
   // 2: รายเดือนปีล่าสุด (incIPD)
   mk('p2_ip_monthly','line',getM(),[ln('รายได้ IPD',D[curYear].incIPD,P.g,true)],{lg:false});
@@ -1012,23 +1039,7 @@ function buildP2(){
   // 4: Adj.RW ย้อนหลัง
   mk('p2_rw_hist','line',YR8,[ln('Sum Adj.RW',p2_rw_hist,P.p)],{lg:false,u:'rw',dl:true});
   // 5: Admit + BOR dual-axis
-  if(CH['p2_admit_bor_hist'])CH['p2_admit_bor_hist'].destroy();
-  const elab=document.getElementById('p2_admit_bor_hist');
-  if(elab)CH['p2_admit_bor_hist']=new Chart(elab,{type:'line',
-    data:{labels:YR8,datasets:[
-      {label:'Admit เฉลี่ย/เดือน (ราย)',data:p2_admit_hist,borderColor:'rgba(85,160,160,1)',backgroundColor:'rgba(122,184,184,.12)',fill:true,tension:0,pointRadius:4,yAxisID:'y',borderWidth:2,datalabels:{color:'rgba(60,120,120,1)'}},
-      {label:'BOR (%)',data:p2_bor_hist,borderColor:'rgba(90,155,196,1)',backgroundColor:'transparent',fill:false,tension:0,pointRadius:4,yAxisID:'y2',borderWidth:2,datalabels:{color:'rgba(60,110,150,1)'}},
-      {label:'เกณฑ์ BOR 35%',data:YR8.map(()=>35),borderColor:'rgba(212,168,106,.7)',borderDash:[6,4],borderWidth:1.5,pointRadius:0,fill:false,tension:0,yAxisID:'y2',datalabels:{display:false}},
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,layout:{padding:{top:24}},plugins:{
-      legend:{position:'bottom',labels:{color:'#a09080',font:{family:'Sarabun',size:10},boxWidth:10,padding:7}},
-      tooltip:{backgroundColor:'#fdfaf7',borderColor:'#ddd5ca',borderWidth:1,titleColor:'#3a2e24',bodyColor:'#7a6858',padding:8},
-      datalabels:{display:true,align:'top',anchor:'end',offset:6,font:{family:'Sarabun',size:9,weight:700},formatter:(v,ctx)=>v==null?'':(ctx.dataset.yAxisID==='y2'?Number(v).toFixed(1)+'%':Number(v).toLocaleString('th-TH'))}
-    },scales:{
-      x:{grid:{color:'rgba(200,185,170,.18)'},ticks:{color:'#a09080',font:{family:'Sarabun',size:10}}},
-      y:{grid:{color:'rgba(200,185,170,.18)'},ticks:{color:'rgba(85,160,160,1)',font:{family:'DM Mono',size:10}},title:{display:true,text:'ราย',color:'rgba(85,160,160,.8)',font:{size:10}}},
-      y2:{position:'right',grid:{drawOnChartArea:false},ticks:{color:'rgba(90,155,196,1)',font:{family:'DM Mono',size:10},callback:v=>v+'%'},title:{display:true,text:'BOR %',color:'rgba(90,155,196,.8)',font:{size:10}}}
-    }}});
+  buildAB();
 
   // ── OPD ──
   mk('p2_op_inc','line',YR3,[ln('รายได้ OPD',p2_op_inc3,P.b,true)],{lg:false,dl:true});
@@ -1062,19 +1073,19 @@ function buildP2(){
   mk('p2_phys_visits','line',YR5GOV,[ln('Visit กายภาพ',p2_phys_visits,P.p)],{lg:false,u:'v',dl:true});
   mk('p2_phys_rev','line',YR5GOV,[ln('รายได้เฉลี่ย/Visit',p2_phys_rev,P.ro)],{lg:false,u:'bv',dl:true});
 
-  mk('p2_pp_line','line',PP_LBL,[ln('ปี 66',p2_pp[0],P.b),ln('ปี 67',p2_pp[1],P.g),ln('ปี 68',p2_pp[2],P.a)]);
+  mk('p2_pp_line','line',PP_LBL,[ln('ปี 66',p2_pp[0],P.b),ln('ปี 67',p2_pp[1],P.g),ln('ปี 68',p2_pp[2],P.a),ln('ปี 69',p2_pp[3],P.p)]);
 }
 
 function buildKPI2(){
   const k=[
-    {l:'รายได้รวม ปี 68',v:'10.01M',cls:'c-g',s:'sg',sub:'บาท'},
-    {l:'โต ปี 67→68',v:'+2.44%',cls:'c-g',s:'sg',sub:'รวมทุกหน่วย'},
-    {l:'รายได้ IPD ปี 68',v:'5.06M',cls:'c-p',s:'sp',sub:'+1.98%'},
-    {l:'รายได้ OPD ปี 68',v:'2.92M',cls:'c-b',s:'sb',sub:'+24.84%'},
-    {l:'ทันตกรรม ปี 68',v:'876K',cls:'c-r',s:'sr',sub:'-23.35%'},
-    {l:'กายภาพ ปี 68',v:'887K',cls:'c-r',s:'sr',sub:'-12.34%'},
-    {l:'Adj.RW ปี 68',v:'763.55',cls:'c-t',s:'st',sub:'-5.45%'},
-    {l:'Admit เฉลี่ย/เดือน ปี 68',v:'130',cls:'c-p',s:'sp',sub:'ราย/เดือน'},
+    {l:'รายได้รวม ปี 69',v:'14.05M',cls:'c-g',s:'sg',sub:'บาท'},
+    {l:'โต ปี 68→69',v:'+40.40%',cls:'c-g',s:'sg',sub:'รวมทุกหน่วย'},
+    {l:'รายได้ IPD ปี 69',v:'6.34M',cls:'c-p',s:'sp',sub:'+25.18%'},
+    {l:'รายได้ OPD ปี 69',v:'4.79M',cls:'c-b',s:'sb',sub:'+64.07%'},
+    {l:'ทันตกรรม ปี 69',v:'875K',cls:'c-r',s:'sr',sub:'-0.12%'},
+    {l:'กายภาพ ปี 69',v:'1.67M',cls:'c-g',s:'sg',sub:'+88.28%'},
+    {l:'Adj.RW ปี 69',v:'1,011.48',cls:'c-t',s:'st',sub:'+32.47%'},
+    {l:'Admit เฉลี่ย/เดือน ปี 69',v:'145',cls:'c-p',s:'sp',sub:'ราย/เดือน'},
   ];
   document.getElementById('kpiRow2').innerHTML=k.map(i=>`<div class="fin-item" style="min-width:110px;"><div class="fin-lbl">${i.l}</div><div class="fin-val ${i.cls}">${i.v}</div><div class="fin-sub">${i.sub}</div><div class="fin-strip ${i.s}"></div></div>`).join('');
 }
